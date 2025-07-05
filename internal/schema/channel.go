@@ -15,4 +15,5 @@ type Channel struct {
 	ChannelID  string     `gorm:"unique;size:30;"`
 	Channel    string     `gorm:"size:80;"`
 	LastFetch  *time.Time `gorm:"index"`
+	DisabledAt *time.Time `gorm:"index"`
 }
