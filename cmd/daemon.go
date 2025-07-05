@@ -7,6 +7,7 @@ import (
 	"ytcw/internal/config"
 	"ytcw/internal/db"
 	"ytcw/internal/fetcher"
+	"ytcw/internal/logger"
 	"ytcw/internal/mapper"
 	"ytcw/internal/repository"
 )
@@ -19,8 +20,15 @@ var daemonCmd = &cobra.Command{
 }
 
 func daemon(cmd *cobra.Command, args []string) {
-	repo := repository.Repository{DB: db.Connect()}
-	cfg := config.LoadConfig()
+	dbCon, err := db.Connect()
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to connect to database")
+	}
+	repo := repository.Repository{DB: dbCon}
+	cfg := config.GetConfig()
+	ytFetcher := fetcher.Fetcher{
+		Logger: logger.JSON,
+	}
 
 	log.Info().Msg("Starting fetcher daemon")
 
@@ -31,7 +39,7 @@ func daemon(cmd *cobra.Command, args []string) {
 			continue
 		}
 
-		videoStream := fetcher.FetchVideos(channel.UploaderID)
+		videoStream := ytFetcher.FetchVideos(channel.UploaderID)
 
 		for info := range videoStream {
 			video := mapper.MapVideoInfoToVideo(info)

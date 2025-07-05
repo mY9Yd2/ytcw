@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"ytcw/internal/config"
 )
@@ -14,7 +15,11 @@ func Execute() error {
 }
 
 func init() {
-	cobra.OnInitialize(func() { _ = config.LoadConfig })
+	cobra.OnInitialize(func() {
+		if err := config.LoadConfig(); err != nil {
+			log.Fatal().Err(err).Msg("Failed to read config")
+		}
+	})
 
 	mainGroup := cobra.Group{ID: "main", Title: "Main Commands"}
 	rootCmd.AddCommand(serveCmd)
@@ -23,6 +28,7 @@ func init() {
 
 	adminGroup := cobra.Group{ID: "admin", Title: "Admin Commands"}
 	rootCmd.AddCommand(adminAddChannelCmd)
+	rootCmd.AddCommand(adminDeleteChannelCmd)
 
 	rootCmd.AddGroup(&mainGroup, &adminGroup)
 }

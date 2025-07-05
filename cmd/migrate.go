@@ -16,9 +16,12 @@ var migrateCmd = &cobra.Command{
 }
 
 func migrate(cmd *cobra.Command, args []string) {
-	database := db.Connect()
+	database, err := db.Connect()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	err := database.AutoMigrate(&schema.Category{}, &schema.Channel{}, &schema.Video{})
+	err = database.AutoMigrate(&schema.Category{}, &schema.Channel{}, &schema.Video{})
 	if err != nil {
 		log.Fatal("Failed to auto migrate db", err)
 	}

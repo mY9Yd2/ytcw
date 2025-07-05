@@ -69,3 +69,35 @@ func (r *Repository) GetStaleChannel(d time.Duration) (*schema.Channel, error) {
 
 	return &channel, nil
 }
+
+func (r *Repository) SoftDeleteChannelByUploaderID(uploaderID string) error {
+	var channel schema.Channel
+	if err := r.DB.Where("uploader_id = ?", uploaderID).Find(&channel).Error; err != nil {
+		return err
+	}
+	return r.softDeleteChannel(channel)
+}
+
+func (r *Repository) SoftDeleteChannelByChannelID(channelID string) error {
+	var channel schema.Channel
+	if err := r.DB.Where("channel_id = ?", channelID).Find(&channel).Error; err != nil {
+		return err
+	}
+	return r.softDeleteChannel(channel)
+}
+
+func (r *Repository) softDeleteChannel(channel schema.Channel) error {
+	tx := r.DB.Begin()
+
+	if err := tx.Where("channel_refer = ?", channel.ID).Delete(&schema.Video{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Delete(&channel).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
+}

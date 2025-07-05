@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 	"io"
 	"net/http"
 	"os/exec"
@@ -14,19 +14,20 @@ import (
 	"ytcw/internal/model"
 )
 
-type FetchOptions struct {
-	CheckCutoff  bool
-	AddThumbnail bool
+type fetchOptions struct {
+	checkCutoff  bool
+	addThumbnail bool
 }
 
-type Ytdlp struct {
-	BaseArgs []string
-	URL      string
+type ytdlp struct {
+	baseArgs     []string
+	url          string
+	fetchOptions fetchOptions
 }
 
-func NewYtDlp() *Ytdlp {
-	return &Ytdlp{
-		BaseArgs: []string{
+func newYtDlp() *ytdlp {
+	return &ytdlp{
+		baseArgs: []string{
 			"--no-simulate",
 			"--no-download",
 			"-j",
@@ -34,53 +35,72 @@ func NewYtDlp() *Ytdlp {
 	}
 }
 
-func (y *Ytdlp) WithURL(url string) *Ytdlp {
-	y.URL = url
+func (y *ytdlp) WithURL(url string) *ytdlp {
+	y.url = url
 	return y
 }
 
-func (y *Ytdlp) AddArg(arg string) *Ytdlp {
-	y.BaseArgs = append(y.BaseArgs, arg)
+func (y *ytdlp) AddArg(arg string) *ytdlp {
+	y.baseArgs = append(y.baseArgs, arg)
 	return y
 }
 
-func (y *Ytdlp) Cmd() *exec.Cmd {
-	args := append(y.BaseArgs, y.URL)
+func (y *ytdlp) Cmd() *exec.Cmd {
+	args := append(y.baseArgs, y.url)
 	return exec.Command("yt-dlp", args...)
 }
 
-func (y *Ytdlp) channelBaseURL(channel string) string {
+func (y *ytdlp) channelBaseURL(channel string) string {
 	if strings.HasPrefix(channel, "@") {
 		return fmt.Sprintf("https://www.youtube.com/%s", channel)
 	}
 	return fmt.Sprintf("https://www.youtube.com/channel/%s", channel)
 }
 
-func (y *Ytdlp) Channel(channel string) *Ytdlp {
+func (y *ytdlp) SetFetchOpts(options fetchOptions) *ytdlp {
+	y.fetchOptions = options
+	return y
+}
+
+func (y *ytdlp) SetChannelURL(channel string) *ytdlp {
 	y.WithURL(y.channelBaseURL(channel))
 	return y
 }
 
-func (y *Ytdlp) Shorts(channel string) *Ytdlp {
+func (y *ytdlp) SetShortsURL(channel string) *ytdlp {
 	y.WithURL(y.channelBaseURL(channel) + "/shorts")
 	return y
 }
 
-func (y *Ytdlp) Videos(channel string) *Ytdlp {
+func (y *ytdlp) SetVideosURL(channel string) *ytdlp {
 	y.WithURL(y.channelBaseURL(channel) + "/videos")
 	return y
 }
 
-func fetch(ytdlp Ytdlp, out chan<- model.VideoInfo, stop chan struct{}, opts FetchOptions) error {
-	cmd, stdout, err := startYtDLPCommand(ytdlp)
+func (y *ytdlp) fetch(logger zerolog.Logger, out chan<- model.VideoInfo, stop chan struct{}) error {
+	cmd, stdout, err := y.startYtDLPCommand()
 	if err != nil {
 		return err
 	}
-	defer cmd.Wait()
+
+	defer func() {
+		_ = cmd.Wait()
+	}()
 
 	reader := bufio.NewReader(stdout)
-	cutoff := time.Now().UTC().Add(-config.LoadConfig().Ytcwd.MaxVideoAge)
+	cutoff := time.Now().UTC().Add(-config.GetConfig().Ytcwd.MaxVideoAge)
 
+	return y.streamVideos(logger, cmd, reader, cutoff, out, stop)
+}
+
+func (y *ytdlp) streamVideos(
+	logger zerolog.Logger,
+	cmd *exec.Cmd,
+	reader *bufio.Reader,
+	cutoff time.Time,
+	out chan<- model.VideoInfo,
+	stop chan struct{},
+) error {
 	for {
 		select {
 		case <-stop:
@@ -89,66 +109,37 @@ func fetch(ytdlp Ytdlp, out chan<- model.VideoInfo, stop chan struct{}, opts Fet
 		default:
 		}
 
-		line, err := readNextLine(reader)
+		line, err := y.readNextLine(reader)
 		if err != nil {
 			break
 		}
 
-		info, err := parseVideoInfo(line)
+		info, err := y.parseVideoInfo(line)
 		if err != nil {
-			log.Error().Err(err).Msg("Error parsing JSON")
+			logger.Error().Err(err).Msg("Error parsing JSON")
 			continue
 		}
 
-		if opts.CheckCutoff && isOlderThan(info.Timestamp, cutoff) {
+		if y.fetchOptions.checkCutoff && y.isOlderThan(info.Timestamp, cutoff) {
 			close(stop)
 			_ = cmd.Process.Kill()
 			return nil
 		}
 
-		if opts.AddThumbnail {
-			info.Thumbnail, err = findAvailableThumbnail(info.DisplayID)
+		if y.fetchOptions.addThumbnail {
+			info.Thumbnail, err = y.findAvailableThumbnail(info.DisplayID)
 			if err != nil {
-				log.Error().Err(err).Msg("Error finding thumbnail")
+				logger.Error().Err(err).Msg("Error finding thumbnail")
 			}
 		}
 
 		out <- info
 	}
-
 	return nil
 }
 
-func FetchVideos(channel string) <-chan model.VideoInfo {
-	out := make(chan model.VideoInfo)
-
-	go func() {
-		defer close(out)
-
-		stop := make(chan struct{})
-		fetchOpts := FetchOptions{
-			CheckCutoff:  true,
-			AddThumbnail: true,
-		}
-
-		shorts := NewYtDlp().Shorts(channel)
-		if err := fetch(*shorts, out, stop, fetchOpts); err != nil {
-			log.Error().Err(err).Msg("Error fetching shorts")
-		}
-
-		stop = make(chan struct{}) // Reset
-
-		videos := NewYtDlp().Videos(channel)
-		if err := fetch(*videos, out, stop, fetchOpts); err != nil {
-			log.Error().Err(err).Msg("Error fetching videos")
-		}
-	}()
-
-	return out
-}
-
-func startYtDLPCommand(ytdlp Ytdlp) (*exec.Cmd, io.ReadCloser, error) {
-	cmd := ytdlp.Cmd()
+func (y *ytdlp) startYtDLPCommand() (*exec.Cmd, io.ReadCloser, error) {
+	cmd := y.Cmd()
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -160,21 +151,21 @@ func startYtDLPCommand(ytdlp Ytdlp) (*exec.Cmd, io.ReadCloser, error) {
 	return cmd, stdout, nil
 }
 
-func readNextLine(reader *bufio.Reader) ([]byte, error) {
+func (y *ytdlp) readNextLine(reader *bufio.Reader) ([]byte, error) {
 	return reader.ReadBytes('\n')
 }
 
-func parseVideoInfo(line []byte) (model.VideoInfo, error) {
+func (y *ytdlp) parseVideoInfo(line []byte) (model.VideoInfo, error) {
 	var info model.VideoInfo
 	err := json.Unmarshal(line, &info)
 	return info, err
 }
 
-func isOlderThan(timestamp int64, cutoff time.Time) bool {
+func (y *ytdlp) isOlderThan(timestamp int64, cutoff time.Time) bool {
 	return time.Unix(timestamp, 0).Before(cutoff)
 }
 
-func findAvailableThumbnail(displayId string) (string, error) {
+func (y *ytdlp) findAvailableThumbnail(displayId string) (string, error) {
 	fileNames := []string{"sddefault.webp", "hqdefault.webp", "0.webp"}
 	baseURL := fmt.Sprintf("https://i.ytimg.com/vi_webp/%s/", displayId)
 	client := http.Client{
@@ -200,36 +191,4 @@ func findAvailableThumbnail(displayId string) (string, error) {
 	}
 
 	return "", fmt.Errorf("no available thumbnail found")
-}
-
-func GetChannelInfo(channel string) model.ChannelInfo {
-	out := make(chan model.VideoInfo)
-	stop := make(chan struct{})
-
-	go func() {
-		defer close(out)
-
-		ytdlp := NewYtDlp().
-			AddArg("-I:10").
-			Channel(channel)
-
-		if err := fetch(*ytdlp, out, stop, FetchOptions{
-			CheckCutoff:  false,
-			AddThumbnail: false,
-		}); err != nil {
-			log.Error().Err(err).Msg("Error fetching channel info")
-		}
-	}()
-
-	info, ok := <-out
-	if !ok {
-		log.Fatal().Msg("No video info found")
-	}
-	close(stop)
-
-	return model.ChannelInfo{
-		UploaderID: info.UploaderID,
-		ChannelID:  info.ChannelID,
-		Channel:    info.Channel,
-	}
 }

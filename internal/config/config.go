@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
 	"sync"
 	"time"
@@ -29,6 +29,7 @@ type General struct {
 }
 
 type Config struct {
+	Logger  zerolog.Logger
 	DB      DBConfig
 	General General
 	Ytcwd   Ytcwd
@@ -37,18 +38,25 @@ type Config struct {
 var once sync.Once
 var config *Config
 
-func LoadConfig() *Config {
+func GetConfig() *Config {
 	if config != nil {
 		return config
 	}
+	_ = LoadConfig()
+	return config
+}
+
+func LoadConfig() error {
+	var err error
 
 	once.Do(func() {
 		viper.SetConfigName("config")
 		viper.SetConfigType("toml")
 		viper.AddConfigPath("./config")
 
-		if err := viper.ReadInConfig(); err != nil {
-			log.Fatal().Err(err).Msg("Failed to read config")
+		if e := viper.ReadInConfig(); e != nil {
+			err = e
+			return
 		}
 
 		viper.SetConfigName("config.local")
@@ -75,7 +83,7 @@ func LoadConfig() *Config {
 		}
 	})
 
-	return config
+	return err
 }
 
 func (c *Config) GetDSN() string {
