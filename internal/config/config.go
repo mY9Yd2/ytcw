@@ -24,9 +24,14 @@ type Ytcwd struct {
 	MaxLastFetchAge        time.Duration
 }
 
+type General struct {
+	AppEnv string
+}
+
 type Config struct {
-	DB    DBConfig
-	Ytcwd Ytcwd
+	DB      DBConfig
+	General General
+	Ytcwd   Ytcwd
 }
 
 var once sync.Once
@@ -57,6 +62,9 @@ func LoadConfig() *Config {
 				Password: viper.GetString("database.password"),
 				Name:     viper.GetString("database.name"),
 				SSLMode:  viper.GetString("database.sslmode"),
+			},
+			General: General{
+				AppEnv: viper.GetString("general.app_env"),
 			},
 			Ytcwd: Ytcwd{
 				MaxVideoAge:            viper.GetDuration("ytcwd.max_video_age"),

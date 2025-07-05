@@ -21,3 +21,11 @@ func MapVideoInfoToVideo(info model.VideoInfo) schema.Video {
 		},
 	}
 }
+
+func MapChannelInfoToChannel(info model.ChannelInfo) schema.Channel {
+	return schema.Channel{
+		UploaderID: info.UploaderID,
+		ChannelID:  info.ChannelID,
+		Channel:    info.Channel,
+	}
+}

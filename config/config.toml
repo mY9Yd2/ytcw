@@ -6,6 +6,9 @@ password = ""
 name = "ytcw"
 sslmode = "disable"
 
+[general]
+app_env = "production"
+
 [ytcwd]
 max_video_age = "168h"
 no_channel_retry_interval = "15m"

@@ -1,7 +1,8 @@
-package main
+package cmd
 
 import (
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/cobra"
 	"time"
 	"ytcw/internal/config"
 	"ytcw/internal/db"
@@ -10,9 +11,18 @@ import (
 	"ytcw/internal/repository"
 )
 
-func main() {
+var daemonCmd = &cobra.Command{
+	Use:     "daemon",
+	Short:   "Start the fetcher daemon",
+	Run:     daemon,
+	GroupID: "main",
+}
+
+func daemon(cmd *cobra.Command, args []string) {
 	repo := repository.Repository{DB: db.Connect()}
 	cfg := config.LoadConfig()
+
+	log.Info().Msg("Starting fetcher daemon")
 
 	for {
 		channel, err := repo.GetStaleChannel(cfg.Ytcwd.MaxLastFetchAge)
@@ -33,7 +43,7 @@ func main() {
 
 		channel.LastFetch = func(t time.Time) *time.Time {
 			return &t
-		}(time.Now())
+		}(time.Now().UTC())
 
 		if err := repo.DB.Save(channel).Error; err != nil {
 			log.Warn().Err(err).Str("UploaderID", channel.UploaderID).Msg("Failed to update last_fetch")

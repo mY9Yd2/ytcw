@@ -4,6 +4,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"sync"
 	"ytcw/internal/config"
 )
@@ -20,7 +21,9 @@ func Connect() *gorm.DB {
 		cfg := config.LoadConfig()
 		dsn := cfg.GetDSN()
 
-		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+			Logger: logger.Default.LogMode(getLogLevel(*cfg)),
+		})
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to connect database")
 		}
@@ -29,4 +32,15 @@ func Connect() *gorm.DB {
 	})
 
 	return DB
+}
+
+func getLogLevel(cfg config.Config) logger.LogLevel {
+	switch cfg.General.AppEnv {
+	case "production", "prod":
+		return logger.Silent
+	case "debug":
+		return logger.Info
+	default:
+		return logger.Warn
+	}
 }
