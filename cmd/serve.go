@@ -1,8 +1,15 @@
 package cmd
 
 import (
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/spf13/cobra"
-	"log"
+	"net/http"
+	"ytcw/internal/api"
+	"ytcw/internal/db"
+	"ytcw/internal/logger"
+	"ytcw/internal/repository"
+	"ytcw/internal/service"
 )
 
 var serveCmd = &cobra.Command{
@@ -12,5 +19,23 @@ var serveCmd = &cobra.Command{
 }
 
 func serve(cmd *cobra.Command, args []string) {
-	log.Println("TODO")
+	log := logger.JSON
+
+	dbCon, err := db.Connect()
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to connect to database")
+	}
+
+	channelRepo := repository.NewChannelRepository(dbCon)
+	channelService := service.NewChannelService(channelRepo)
+
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+
+	r.Mount("/api/v1", api.Routes(log, channelService))
+
+	log.Info().Msg("Starting server on :8080")
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		log.Fatal().Err(err).Msg("server exited with error")
+	}
 }
