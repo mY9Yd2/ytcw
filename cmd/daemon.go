@@ -33,9 +33,9 @@ func daemon(cmd *cobra.Command, args []string) {
 	log.Info().Msg("Starting fetcher daemon")
 
 	for {
-		channel, err := repo.GetStaleChannel(cfg.Ytcwd.MaxLastFetchAge)
+		channel, err := repo.GetStaleChannel(cfg.Fetcher.MaxLastFetchAge)
 		if err != nil {
-			time.Sleep(cfg.Ytcwd.NoChannelRetryInterval)
+			time.Sleep(cfg.Fetcher.NoChannelRetryInterval)
 			continue
 		}
 
@@ -57,6 +57,6 @@ func daemon(cmd *cobra.Command, args []string) {
 			log.Warn().Err(err).Str("UploaderID", channel.UploaderID).Msg("Failed to update last_fetch")
 		}
 
-		time.Sleep(cfg.Ytcwd.NoChannelRetryInterval)
+		time.Sleep(cfg.Fetcher.NoChannelRetryInterval)
 	}
 }

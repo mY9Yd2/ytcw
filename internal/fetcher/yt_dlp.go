@@ -88,7 +88,7 @@ func (y *ytdlp) fetch(logger zerolog.Logger, out chan<- model.VideoInfo, stop ch
 	}()
 
 	reader := bufio.NewReader(stdout)
-	cutoff := time.Now().UTC().Add(-config.GetConfig().Ytcwd.MaxVideoAge)
+	cutoff := time.Now().UTC().Add(-config.GetConfig().Fetcher.MaxVideoAge)
 
 	return y.streamVideos(logger, cmd, reader, cutoff, out, stop)
 }

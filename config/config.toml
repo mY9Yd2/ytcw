@@ -9,7 +9,7 @@ sslmode = "disable"
 [general]
 app_env = "production"
 
-[ytcwd]
+[fetcher]
 max_video_age = "168h"
 no_channel_retry_interval = "15m"
 post_fetch_sleep_duration = "1m"

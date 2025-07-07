@@ -17,7 +17,7 @@ type DBConfig struct {
 	SSLMode  string
 }
 
-type Ytcwd struct {
+type Fetcher struct {
 	MaxVideoAge            time.Duration
 	NoChannelRetryInterval time.Duration
 	PostFetchSleepDuration time.Duration
@@ -32,7 +32,7 @@ type Config struct {
 	Logger  zerolog.Logger
 	DB      DBConfig
 	General General
-	Ytcwd   Ytcwd
+	Fetcher Fetcher
 }
 
 var once sync.Once
@@ -74,11 +74,11 @@ func LoadConfig() error {
 			General: General{
 				AppEnv: viper.GetString("general.app_env"),
 			},
-			Ytcwd: Ytcwd{
-				MaxVideoAge:            viper.GetDuration("ytcwd.max_video_age"),
-				NoChannelRetryInterval: viper.GetDuration("ytcwd.no_channel_retry_interval"),
-				PostFetchSleepDuration: viper.GetDuration("ytcwd.post_fetch_sleep_duration"),
-				MaxLastFetchAge:        viper.GetDuration("ytcwd.max_last_fetch_age"),
+			Fetcher: Fetcher{
+				MaxVideoAge:            viper.GetDuration("fetcher.max_video_age"),
+				NoChannelRetryInterval: viper.GetDuration("fetcher.no_channel_retry_interval"),
+				PostFetchSleepDuration: viper.GetDuration("fetcher.post_fetch_sleep_duration"),
+				MaxLastFetchAge:        viper.GetDuration("fetcher.max_last_fetch_age"),
 			},
 		}
 	})
