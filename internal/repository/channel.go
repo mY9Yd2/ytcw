@@ -1,9 +1,9 @@
 package repository
 
 import (
+	model "github.com/mY9Yd2/ytcw/internal/model/api"
+	"github.com/mY9Yd2/ytcw/internal/schema"
 	"gorm.io/gorm"
-	model "ytcw/internal/model/api"
-	"ytcw/internal/schema"
 )
 
 type ChannelRepository interface {

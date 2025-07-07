@@ -1,8 +1,8 @@
 package fetcher
 
 import (
+	"github.com/mY9Yd2/ytcw/internal/model"
 	"github.com/rs/zerolog"
-	"ytcw/internal/model"
 )
 
 type Fetcher struct {

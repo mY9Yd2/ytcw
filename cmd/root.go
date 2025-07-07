@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/mY9Yd2/ytcw/internal/config"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"ytcw/internal/config"
 )
 
 var rootCmd = &cobra.Command{

@@ -1,8 +1,8 @@
 package service
 
 import (
-	model "ytcw/internal/model/api"
-	"ytcw/internal/repository"
+	model "github.com/mY9Yd2/ytcw/internal/model/api"
+	"github.com/mY9Yd2/ytcw/internal/repository"
 )
 
 type ChannelService interface {

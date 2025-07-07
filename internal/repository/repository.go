@@ -1,10 +1,10 @@
 package repository
 
 import (
+	"github.com/mY9Yd2/ytcw/internal/schema"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
-	"ytcw/internal/schema"
 )
 
 type Repository struct {

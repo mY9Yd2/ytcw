@@ -1,11 +1,11 @@
 package cmd
 
 import (
+	"github.com/mY9Yd2/ytcw/internal/db"
+	"github.com/mY9Yd2/ytcw/internal/repository"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"strings"
-	"ytcw/internal/db"
-	"ytcw/internal/repository"
 )
 
 var adminDeleteChannelCmd = &cobra.Command{

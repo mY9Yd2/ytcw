@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/mY9Yd2/ytcw/cmd"
 	"log"
-	"ytcw/cmd"
 )
 
 func main() {

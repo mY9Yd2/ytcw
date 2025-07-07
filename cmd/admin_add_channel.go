@@ -1,13 +1,13 @@
 package cmd
 
 import (
+	"github.com/mY9Yd2/ytcw/internal/db"
+	"github.com/mY9Yd2/ytcw/internal/fetcher"
+	"github.com/mY9Yd2/ytcw/internal/logger"
+	"github.com/mY9Yd2/ytcw/internal/mapper"
+	"github.com/mY9Yd2/ytcw/internal/repository"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"ytcw/internal/db"
-	"ytcw/internal/fetcher"
-	"ytcw/internal/logger"
-	"ytcw/internal/mapper"
-	"ytcw/internal/repository"
 )
 
 var adminAddChannelCmd = &cobra.Command{

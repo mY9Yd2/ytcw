@@ -2,10 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	model "github.com/mY9Yd2/ytcw/internal/model/api"
+	"github.com/mY9Yd2/ytcw/internal/service"
 	"github.com/rs/zerolog"
 	"net/http"
-	model "ytcw/internal/model/api"
-	"ytcw/internal/service"
 )
 
 type ChannelHandler struct {

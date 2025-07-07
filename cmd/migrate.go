@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/mY9Yd2/ytcw/internal/db"
+	"github.com/mY9Yd2/ytcw/internal/schema"
 	"github.com/spf13/cobra"
 	"log"
-	"ytcw/internal/db"
-	"ytcw/internal/schema"
 )
 
 var migrateCmd = &cobra.Command{

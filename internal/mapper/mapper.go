@@ -1,9 +1,9 @@
 package mapper
 
 import (
+	"github.com/mY9Yd2/ytcw/internal/model"
+	"github.com/mY9Yd2/ytcw/internal/schema"
 	"time"
-	"ytcw/internal/model"
-	"ytcw/internal/schema"
 )
 
 func MapVideoInfoToVideo(info model.VideoInfo) schema.Video {

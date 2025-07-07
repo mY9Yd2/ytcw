@@ -3,13 +3,13 @@ package cmd
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/mY9Yd2/ytcw/internal/api"
+	"github.com/mY9Yd2/ytcw/internal/db"
+	"github.com/mY9Yd2/ytcw/internal/logger"
+	"github.com/mY9Yd2/ytcw/internal/repository"
+	"github.com/mY9Yd2/ytcw/internal/service"
 	"github.com/spf13/cobra"
 	"net/http"
-	"ytcw/internal/api"
-	"ytcw/internal/db"
-	"ytcw/internal/logger"
-	"ytcw/internal/repository"
-	"ytcw/internal/service"
 )
 
 var serveCmd = &cobra.Command{

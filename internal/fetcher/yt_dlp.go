@@ -4,14 +4,14 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/mY9Yd2/ytcw/internal/config"
+	"github.com/mY9Yd2/ytcw/internal/model"
 	"github.com/rs/zerolog"
 	"io"
 	"net/http"
 	"os/exec"
 	"strings"
 	"time"
-	"ytcw/internal/config"
-	"ytcw/internal/model"
 )
 
 type fetchOptions struct {

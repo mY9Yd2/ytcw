@@ -2,11 +2,11 @@ package db
 
 import (
 	"fmt"
+	"github.com/mY9Yd2/ytcw/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"sync"
-	"ytcw/internal/config"
 )
 
 var once sync.Once

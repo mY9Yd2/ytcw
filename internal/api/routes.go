@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/mY9Yd2/ytcw/internal/service"
 	"github.com/rs/zerolog"
-	"ytcw/internal/service"
 )
 
 func Routes(logger zerolog.Logger, channelService service.ChannelService) chi.Router {

@@ -1,4 +1,4 @@
-module ytcw
+module github.com/mY9Yd2/ytcw
 
 go 1.24.4
 
