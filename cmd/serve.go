@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/mY9Yd2/ytcw/internal/api"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/logger"
@@ -30,7 +29,7 @@ func serve(cmd *cobra.Command, args []string) {
 	channelService := service.NewChannelService(channelRepo)
 
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	r.Use(api.ZerologMiddleware(log))
 
 	r.Mount("/api/v1", api.Routes(log, channelService))
 
