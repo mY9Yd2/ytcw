@@ -1,11 +1,10 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/mY9Yd2/ytcw/internal/db"
+	"github.com/mY9Yd2/ytcw/internal/logger"
 	"github.com/mY9Yd2/ytcw/internal/schema"
 	"github.com/spf13/cobra"
-	"log"
 )
 
 var migrateCmd = &cobra.Command{
@@ -16,15 +15,17 @@ var migrateCmd = &cobra.Command{
 }
 
 func migrate(cmd *cobra.Command, args []string) {
+	log := logger.Pretty
+
 	database, err := db.Connect()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 
 	err = database.AutoMigrate(&schema.Category{}, &schema.Channel{}, &schema.Video{})
 	if err != nil {
-		log.Fatal("Failed to auto migrate db", err)
+		log.Fatal().Err(err).Msg("Failed to auto migrate the database")
 	}
 
-	fmt.Println("Migration done!")
+	log.Info().Msg("Database migrations complete")
 }

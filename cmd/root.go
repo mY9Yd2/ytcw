@@ -10,10 +10,6 @@ var rootCmd = &cobra.Command{
 	Use: "ytcw",
 }
 
-func Execute() error {
-	return rootCmd.Execute()
-}
-
 func init() {
 	cobra.OnInitialize(func() {
 		if err := config.LoadConfig(); err != nil {
@@ -31,4 +27,8 @@ func init() {
 	rootCmd.AddCommand(adminDeleteChannelCmd)
 
 	rootCmd.AddGroup(&mainGroup, &adminGroup)
+}
+
+func Execute() error {
+	return rootCmd.Execute()
 }

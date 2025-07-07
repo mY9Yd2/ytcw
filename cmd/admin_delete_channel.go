@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/mY9Yd2/ytcw/internal/db"
+	"github.com/mY9Yd2/ytcw/internal/logger"
 	"github.com/mY9Yd2/ytcw/internal/repository"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"strings"
 )
@@ -21,6 +21,8 @@ func init() {
 }
 
 func deleteChannel(cmd *cobra.Command, args []string) {
+	log := logger.Pretty
+
 	channel, err := cmd.Flags().GetString("id")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to get 'id' flag")
@@ -28,7 +30,7 @@ func deleteChannel(cmd *cobra.Command, args []string) {
 
 	dbCon, err := db.Connect()
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to connect to database")
+		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 	repo := repository.Repository{DB: dbCon}
 

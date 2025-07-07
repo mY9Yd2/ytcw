@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/mY9Yd2/ytcw/cmd"
-	"log"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
 	if err := cmd.Execute(); err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("Failed to execute command")
 	}
 }

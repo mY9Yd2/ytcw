@@ -6,7 +6,6 @@ import (
 	"github.com/mY9Yd2/ytcw/internal/logger"
 	"github.com/mY9Yd2/ytcw/internal/mapper"
 	"github.com/mY9Yd2/ytcw/internal/repository"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -25,6 +24,8 @@ func init() {
 }
 
 func addChannel(cmd *cobra.Command, args []string) {
+	log := logger.Pretty
+
 	channel, err := cmd.Flags().GetString("id")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to get 'id' flag")
@@ -37,7 +38,7 @@ func addChannel(cmd *cobra.Command, args []string) {
 
 	dbCon, err := db.Connect()
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to connect to database")
+		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 	repo := repository.Repository{DB: dbCon}
 	var categoryID *uint
@@ -51,7 +52,7 @@ func addChannel(cmd *cobra.Command, args []string) {
 	}
 
 	ytFetcher := fetcher.Fetcher{
-		Logger: logger.JSON,
+		Logger: log,
 	}
 	info := mapper.MapChannelInfoToChannel(ytFetcher.GetChannelInfo(channel))
 	info.CategoryRefer = categoryID

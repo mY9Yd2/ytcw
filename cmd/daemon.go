@@ -4,7 +4,6 @@ import (
 	"github.com/mY9Yd2/ytcw/internal/config"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/fetcher"
-	"github.com/mY9Yd2/ytcw/internal/logger"
 	"github.com/mY9Yd2/ytcw/internal/mapper"
 	"github.com/mY9Yd2/ytcw/internal/repository"
 	"github.com/rs/zerolog/log"
@@ -22,12 +21,12 @@ var daemonCmd = &cobra.Command{
 func daemon(cmd *cobra.Command, args []string) {
 	dbCon, err := db.Connect()
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to connect to database")
+		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 	repo := repository.Repository{DB: dbCon}
 	cfg := config.GetConfig()
 	ytFetcher := fetcher.Fetcher{
-		Logger: logger.JSON,
+		Logger: log.Logger,
 	}
 
 	log.Info().Msg("Starting fetcher daemon")
