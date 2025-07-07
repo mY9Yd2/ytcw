@@ -40,11 +40,11 @@ func addChannel(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
-	repo := repository.Repository{DB: dbCon}
+	categoryRepo := repository.NewCategoryRepository(dbCon)
 	var categoryID *uint
 
 	if category != "" {
-		id, err := repo.SaveCategory(category)
+		id, err := categoryRepo.SaveCategory(category)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed to save category")
 		}
@@ -57,7 +57,8 @@ func addChannel(cmd *cobra.Command, args []string) {
 	info := mapper.MapChannelInfoToChannel(ytFetcher.GetChannelInfo(channel))
 	info.CategoryRefer = categoryID
 
-	if err := repo.SaveChannel(&info); err != nil {
+	channelRepo := repository.NewChannelRepository(dbCon)
+	if err := channelRepo.SaveChannel(&info); err != nil {
 		log.Fatal().Err(err).Msg("Failed to save channel")
 	}
 }

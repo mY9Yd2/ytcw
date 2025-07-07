@@ -1,7 +1,7 @@
 package fetcher
 
 import (
-	"github.com/mY9Yd2/ytcw/internal/model"
+	model "github.com/mY9Yd2/ytcw/internal/model/fetcher"
 	"github.com/rs/zerolog"
 )
 

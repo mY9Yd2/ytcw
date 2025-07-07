@@ -23,7 +23,9 @@ func daemon(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
-	repo := repository.Repository{DB: dbCon}
+
+	channelRepo := repository.NewChannelRepository(dbCon)
+	videoRepo := repository.NewVideoRepository(dbCon)
 	cfg := config.GetConfig()
 	ytFetcher := fetcher.Fetcher{
 		Logger: log.Logger,
@@ -32,7 +34,7 @@ func daemon(cmd *cobra.Command, args []string) {
 	log.Info().Msg("Starting fetcher daemon")
 
 	for {
-		channel, err := repo.GetStaleChannel(cfg.Fetcher.MaxLastFetchAge)
+		channel, err := channelRepo.GetStaleChannel(cfg.Fetcher.MaxLastFetchAge)
 		if err != nil {
 			time.Sleep(cfg.Fetcher.NoChannelRetryInterval)
 			continue
@@ -43,17 +45,14 @@ func daemon(cmd *cobra.Command, args []string) {
 		for info := range videoStream {
 			video := mapper.MapVideoInfoToVideo(info)
 			video.Channel = *channel
-			if err := repo.SaveVideo(&video); err != nil {
+			if err := videoRepo.SaveVideo(&video); err != nil {
 				log.Warn().Err(err).Str("DisplayID", video.DisplayID).Msg("Failed to save video")
 			}
 		}
 
-		channel.LastFetch = func(t time.Time) *time.Time {
-			return &t
-		}(time.Now().UTC())
-
-		if err := repo.DB.Save(channel).Error; err != nil {
-			log.Warn().Err(err).Str("UploaderID", channel.UploaderID).Msg("Failed to update last_fetch")
+		err = channelRepo.UpdateChannelLastFetch(channel.ID, time.Now().UTC())
+		if err != nil {
+			log.Warn().Err(err).Msg("Failed to update channel last fetch")
 		}
 
 		time.Sleep(cfg.Fetcher.NoChannelRetryInterval)

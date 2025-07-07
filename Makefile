@@ -1,11 +1,20 @@
-all: ytcwd migrate
+BINARY_NAME := ytcw
+BUILD_DIR := build
+SRC := main.go
 
-ytcwd:
-	go build -o build/ytcwd ./cmd/daemon
+.PHONY: all
+all: build
 
-migrate:
-	go build -o build/ytcw-migrate ./cmd/migrate
+.PHONY: build
+build:
+	@echo "Building $(BINARY_NAME)..."
+	@mkdir -p $(BUILD_DIR)
+	@go build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC)
+	@echo "Build complete: $(BUILD_DIR)/$(BINARY_NAME)"
 
+.PHONY: clean
 clean:
-	go clean
-	rm -rf ./build/
+	@echo "Cleaning up..."
+	@go clean
+	@rm -rf $(BUILD_DIR)
+	@echo "Clean complete"

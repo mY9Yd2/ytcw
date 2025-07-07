@@ -12,14 +12,6 @@ type Pagination struct {
 	TotalPages uint `json:"total_pages"`
 }
 
-func (p *Pagination) Limit() uint {
-	return p.PageSize
-}
-
-func (p *Pagination) Offset() uint {
-	return (p.Page - 1) * p.PageSize
-}
-
 func NewPaginationFromRequest(r *http.Request) *Pagination {
 	q := r.URL.Query()
 
@@ -37,4 +29,12 @@ func NewPaginationFromRequest(r *http.Request) *Pagination {
 		Page:     uint(page),
 		PageSize: uint(pageSize),
 	}
+}
+
+func (p *Pagination) Limit() uint {
+	return p.PageSize
+}
+
+func (p *Pagination) Offset() uint {
+	return (p.Page - 1) * p.PageSize
 }

@@ -32,14 +32,14 @@ func deleteChannel(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
-	repo := repository.Repository{DB: dbCon}
+	channelRepo := repository.NewChannelRepository(dbCon)
 
 	if strings.HasPrefix(channel, "@") {
-		if err := repo.SoftDeleteChannelByUploaderID(channel); err != nil {
+		if err := channelRepo.SoftDeleteChannelByUploaderID(channel); err != nil {
 			log.Fatal().Err(err).Msg("Failed to delete channel")
 		}
 	} else {
-		if err := repo.SoftDeleteChannelByChannelID(channel); err != nil {
+		if err := channelRepo.SoftDeleteChannelByChannelID(channel); err != nil {
 			log.Fatal().Err(err).Msg("Failed to delete channel")
 		}
 	}

@@ -1,7 +1,7 @@
 package mapper
 
 import (
-	"github.com/mY9Yd2/ytcw/internal/model"
+	model "github.com/mY9Yd2/ytcw/internal/model/fetcher"
 	"github.com/mY9Yd2/ytcw/internal/schema"
 	"time"
 )
