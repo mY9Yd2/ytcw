@@ -1,13 +1,14 @@
 package repository
 
 import (
+	"github.com/google/uuid"
 	"github.com/mY9Yd2/ytcw/internal/schema"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 type CategoryRepository interface {
-	SaveCategory(category string) (uint, error)
+	SaveCategory(category string) (uuid.UUID, error)
 }
 
 type categoryRepository struct {
@@ -18,7 +19,7 @@ func NewCategoryRepository(db *gorm.DB) CategoryRepository {
 	return &categoryRepository{db: db}
 }
 
-func (r *categoryRepository) SaveCategory(category string) (uint, error) {
+func (r *categoryRepository) SaveCategory(category string) (uuid.UUID, error) {
 	c := &schema.Category{
 		Name: category,
 	}

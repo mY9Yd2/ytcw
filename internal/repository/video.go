@@ -28,7 +28,7 @@ func (r *videoRepository) SaveVideo(video *schema.Video) error {
 	}
 
 	video.ChannelRefer = channel.ID
-
+	
 	return r.db.Clauses(clause.OnConflict{
 		Columns: []clause.Column{{Name: "display_id"}},
 		DoUpdates: clause.AssignmentColumns([]string{

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/google/uuid"
 	model "github.com/mY9Yd2/ytcw/internal/model/api"
 	"github.com/mY9Yd2/ytcw/internal/schema"
 	"gorm.io/gorm"
@@ -14,7 +15,7 @@ type ChannelRepository interface {
 	SoftDeleteChannelByUploaderID(uploaderID string) error
 	SoftDeleteChannelByChannelID(channelID string) error
 	GetStaleChannel(d time.Duration) (*schema.Channel, error)
-	UpdateChannelLastFetch(channelID uint, lastFetch time.Time) error
+	UpdateChannelLastFetch(channelID uuid.UUID, lastFetch time.Time) error
 }
 
 type channelRepository struct {
@@ -36,7 +37,7 @@ func (r *channelRepository) SaveChannel(channel *schema.Channel) error {
 	}).Create(channel).Error
 }
 
-func (r *channelRepository) UpdateChannelLastFetch(channelID uint, lastFetch time.Time) error {
+func (r *channelRepository) UpdateChannelLastFetch(channelID uuid.UUID, lastFetch time.Time) error {
 	return r.db.Model(&schema.Channel{}).
 		Where("id = ?", channelID).
 		Update("last_fetch", lastFetch).Error

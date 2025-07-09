@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/google/uuid"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/fetcher"
 	"github.com/mY9Yd2/ytcw/internal/logger"
@@ -41,7 +42,7 @@ func addChannel(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 	categoryRepo := repository.NewCategoryRepository(dbCon)
-	var categoryID *uint
+	var categoryID *uuid.UUID
 
 	if category != "" {
 		id, err := categoryRepo.SaveCategory(category)

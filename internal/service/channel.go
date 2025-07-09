@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/google/uuid"
 	model "github.com/mY9Yd2/ytcw/internal/model/api"
 	"github.com/mY9Yd2/ytcw/internal/repository"
 )
@@ -28,7 +29,7 @@ func (r *channelService) GetChannels(p *model.Pagination) ([]model.ChannelRespon
 	var responses []model.ChannelResponse
 	for _, ch := range channels {
 		var category *model.CategoryResponse
-		if ch.Category != nil && ch.Category.ID != 0 {
+		if ch.Category != nil && ch.Category.ID != uuid.Nil {
 			category = &model.CategoryResponse{
 				ID:   ch.Category.ID,
 				Name: ch.Category.Name,

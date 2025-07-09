@@ -1,15 +1,15 @@
 package schema
 
 import (
-	"gorm.io/gorm"
+	"github.com/google/uuid"
 	"time"
 )
 
 type Channel struct {
-	gorm.Model
-	Videos        []Video `gorm:"foreignKey:ChannelRefer;references:ID;"`
-	CategoryRefer *uint
-	Category      *Category `gorm:"foreignKey:CategoryRefer;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	UUIDModel
+	Videos        []Video    `gorm:"foreignKey:ChannelRefer;references:ID;"`
+	CategoryRefer *uuid.UUID `gorm:"type:uuid;"`
+	Category      *Category  `gorm:"foreignKey:CategoryRefer;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 
 	UploaderID string     `gorm:"unique;size:50;"`
 	ChannelID  string     `gorm:"unique;size:30;"`

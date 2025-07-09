@@ -1,9 +1,12 @@
 package model
 
-import "time"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type ChannelResponse struct {
-	ID         uint              `json:"id"`
+	ID         uuid.UUID         `json:"id"`
 	UploaderID string            `json:"uploader_id"`
 	ChannelID  string            `json:"channel_id"`
 	Channel    string            `json:"channel"`
@@ -13,7 +16,7 @@ type ChannelResponse struct {
 }
 
 type ChannelSummary struct {
-	ID       uint              `json:"id"`
+	ID       uuid.UUID         `json:"id"`
 	Channel  string            `json:"channel"`
 	Category *CategoryResponse `json:"category"`
 }

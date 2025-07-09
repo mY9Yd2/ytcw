@@ -1,14 +1,14 @@
 package schema
 
 import (
-	"gorm.io/gorm"
+	"github.com/google/uuid"
 	"time"
 )
 
 type Video struct {
-	gorm.Model
-	ChannelRefer uint
-	Channel      Channel `gorm:"foreignKey:ChannelRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UUIDModel
+	ChannelRefer uuid.UUID `gorm:"type:uuid;"`
+	Channel      Channel   `gorm:"foreignKey:ChannelRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	Timestamp time.Time
 	FullTitle string

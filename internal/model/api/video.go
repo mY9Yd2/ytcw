@@ -1,9 +1,12 @@
 package model
 
-import "time"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type VideoResponse struct {
-	ID        uint           `json:"id"`
+	ID        uuid.UUID      `json:"id"`
 	Timestamp time.Time      `json:"timestamp"`
 	FullTitle string         `json:"full_title"`
 	DisplayID string         `json:"display_id"`
