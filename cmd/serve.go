@@ -27,11 +27,13 @@ func serve(cmd *cobra.Command, args []string) {
 
 	channelRepo := repository.NewChannelRepository(dbCon)
 	channelService := service.NewChannelService(channelRepo)
+	videoRepo := repository.NewVideoRepository(dbCon)
+	videoService := service.NewVideoService(videoRepo)
 
 	r := chi.NewRouter()
 	r.Use(api.ZerologMiddleware(log.Logger))
 
-	r.Mount("/api/v1", api.Routes(log.Logger, channelService))
+	r.Mount("/api/v1", api.Routes(log.Logger, channelService, videoService))
 
 	log.Info().Str("address", cfg.Api.Address).Msg("Starting server")
 	if err := http.ListenAndServe(cfg.Api.Address, r); err != nil {

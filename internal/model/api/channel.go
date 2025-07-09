@@ -11,3 +11,9 @@ type ChannelResponse struct {
 	DisabledAt *time.Time        `json:"disabled_at"`
 	Category   *CategoryResponse `json:"category"`
 }
+
+type ChannelSummary struct {
+	ID       uint              `json:"id"`
+	Channel  string            `json:"channel"`
+	Category *CategoryResponse `json:"category"`
+}

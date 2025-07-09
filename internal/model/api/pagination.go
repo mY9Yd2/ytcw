@@ -5,6 +5,11 @@ import (
 	"strconv"
 )
 
+type PaginationResponse[T any] struct {
+	Data       []T         `json:"data"`
+	Pagination interface{} `json:"pagination"`
+}
+
 type Pagination struct {
 	Page       uint `json:"page"`
 	PageSize   uint `json:"page_size"`

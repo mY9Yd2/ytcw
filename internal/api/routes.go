@@ -6,12 +6,15 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func Routes(logger zerolog.Logger, channelService service.ChannelService) chi.Router {
+func Routes(logger zerolog.Logger,
+	channelService service.ChannelService,
+	videoService service.VideoService) chi.Router {
 	r := chi.NewRouter()
 
-	channelHandler := NewChannelHandler(logger, channelService)
+	channelHandler := NewChannelHandler(logger, channelService, videoService)
 
 	r.Get("/channels", channelHandler.ListChannels)
+	r.Get("/videos", channelHandler.ListVideos)
 
 	return r
 }

@@ -38,7 +38,7 @@ func (r *channelRepository) SaveChannel(channel *schema.Channel) error {
 
 func (r *channelRepository) UpdateChannelLastFetch(channelID uint, lastFetch time.Time) error {
 	return r.db.Model(&schema.Channel{}).
-		Where("channel_id = ?", channelID).
+		Where("id = ?", channelID).
 		Update("last_fetch", lastFetch).Error
 }
 

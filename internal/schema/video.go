@@ -13,7 +13,7 @@ type Video struct {
 	Timestamp time.Time
 	FullTitle string
 	DisplayID string `gorm:"unique;size:20;"`
-	Duration  int
+	Duration  uint
 	Language  *string `gorm:"size:6;"`
 	Thumbnail string  `gorm:"size:14;"`
 }

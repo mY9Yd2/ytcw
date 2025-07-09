@@ -1,6 +1,7 @@
 package repository
 
 import (
+	model "github.com/mY9Yd2/ytcw/internal/model/api"
 	"github.com/mY9Yd2/ytcw/internal/schema"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -8,6 +9,7 @@ import (
 
 type VideoRepository interface {
 	SaveVideo(video *schema.Video) error
+	FindAll(p *model.Pagination) ([]schema.Video, int64, error)
 }
 
 type videoRepository struct {
@@ -36,4 +38,25 @@ func (r *videoRepository) SaveVideo(video *schema.Video) error {
 			"timestamp",
 		}),
 	}).Create(video).Error
+}
+
+func (r *videoRepository) FindAll(p *model.Pagination) ([]schema.Video, int64, error) {
+	var videos []schema.Video
+	var total int64
+
+	db := r.db.Model(&schema.Video{})
+
+	if err := db.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	err := db.
+		Preload("Channel").
+		Preload("Channel.Category").
+		Limit(int(p.Limit())).
+		Offset(int(p.Offset())).
+		Order("created_at DESC").
+		Find(&videos).Error
+
+	return videos, total, err
 }
