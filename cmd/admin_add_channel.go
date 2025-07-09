@@ -4,8 +4,8 @@ import (
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/fetcher"
 	"github.com/mY9Yd2/ytcw/internal/logger"
-	"github.com/mY9Yd2/ytcw/internal/mapper"
 	"github.com/mY9Yd2/ytcw/internal/repository"
+	"github.com/mY9Yd2/ytcw/internal/schema"
 	"github.com/spf13/cobra"
 )
 
@@ -54,7 +54,14 @@ func addChannel(cmd *cobra.Command, args []string) {
 	ytFetcher := fetcher.Fetcher{
 		Logger: log,
 	}
-	info := mapper.MapChannelInfoToChannel(ytFetcher.GetChannelInfo(channel))
+
+	channelInfo := ytFetcher.GetChannelInfo(channel)
+
+	info := schema.Channel{
+		UploaderID: channelInfo.UploaderID,
+		ChannelID:  channelInfo.ChannelID,
+		Channel:    channelInfo.Channel,
+	}
 	info.CategoryRefer = categoryID
 
 	channelRepo := repository.NewChannelRepository(dbCon)

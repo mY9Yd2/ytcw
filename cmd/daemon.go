@@ -4,8 +4,8 @@ import (
 	"github.com/mY9Yd2/ytcw/internal/config"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/fetcher"
-	"github.com/mY9Yd2/ytcw/internal/mapper"
 	"github.com/mY9Yd2/ytcw/internal/repository"
+	"github.com/mY9Yd2/ytcw/internal/schema"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"time"
@@ -43,7 +43,18 @@ func daemon(cmd *cobra.Command, args []string) {
 		videoStream := ytFetcher.FetchVideos(channel.UploaderID)
 
 		for info := range videoStream {
-			video := mapper.MapVideoInfoToVideo(info)
+			video := schema.Video{
+				Timestamp: time.Unix(info.Timestamp, 0),
+				FullTitle: info.FullTitle,
+				DisplayID: info.DisplayID,
+				Duration:  info.Duration,
+				Language:  &info.Language,
+				Thumbnail: info.Thumbnail,
+				Channel: schema.Channel{
+					UploaderID: info.UploaderID,
+					ChannelID:  info.ChannelID,
+					Channel:    info.Channel,
+				}}
 			video.Channel = *channel
 			if err := videoRepo.SaveVideo(&video); err != nil {
 				log.Warn().Err(err).Str("DisplayID", video.DisplayID).Msg("Failed to save video")
