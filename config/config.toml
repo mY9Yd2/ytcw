@@ -14,3 +14,6 @@ max_video_age = "168h"
 no_channel_retry_interval = "15m"
 post_fetch_sleep_duration = "1m"
 max_last_fetch_age = "4h"
+
+[api]
+address = ":8080"

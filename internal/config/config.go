@@ -24,6 +24,10 @@ type Fetcher struct {
 	MaxLastFetchAge        time.Duration
 }
 
+type Api struct {
+	Address string
+}
+
 type General struct {
 	AppEnv string
 }
@@ -33,16 +37,16 @@ type Config struct {
 	DB      DBConfig
 	General General
 	Fetcher Fetcher
+	Api     Api
 }
 
 var once sync.Once
 var config *Config
 
 func GetConfig() *Config {
-	if config != nil {
-		return config
+	if config == nil {
+		_ = LoadConfig()
 	}
-	_ = LoadConfig()
 	return config
 }
 
@@ -52,6 +56,7 @@ func LoadConfig() error {
 	once.Do(func() {
 		viper.SetConfigName("config")
 		viper.SetConfigType("toml")
+
 		viper.AddConfigPath("./config")
 
 		if e := viper.ReadInConfig(); e != nil {
@@ -79,6 +84,9 @@ func LoadConfig() error {
 				NoChannelRetryInterval: viper.GetDuration("fetcher.no_channel_retry_interval"),
 				PostFetchSleepDuration: viper.GetDuration("fetcher.post_fetch_sleep_duration"),
 				MaxLastFetchAge:        viper.GetDuration("fetcher.max_last_fetch_age"),
+			},
+			Api: Api{
+				Address: viper.GetString("api.address"),
 			},
 		}
 	})

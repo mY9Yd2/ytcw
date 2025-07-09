@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/mY9Yd2/ytcw/internal/api"
+	"github.com/mY9Yd2/ytcw/internal/config"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/repository"
 	"github.com/mY9Yd2/ytcw/internal/service"
@@ -18,6 +19,7 @@ var serveCmd = &cobra.Command{
 }
 
 func serve(cmd *cobra.Command, args []string) {
+	cfg := config.GetConfig()
 	dbCon, err := db.Connect()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
@@ -31,8 +33,8 @@ func serve(cmd *cobra.Command, args []string) {
 
 	r.Mount("/api/v1", api.Routes(log.Logger, channelService))
 
-	log.Info().Msg("Starting server on :8080")
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	log.Info().Str("address", cfg.Api.Address).Msg("Starting server")
+	if err := http.ListenAndServe(cfg.Api.Address, r); err != nil {
 		log.Fatal().Err(err).Msg("Server exited with error")
 	}
 }

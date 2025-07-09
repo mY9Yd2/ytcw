@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"github.com/mY9Yd2/ytcw/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -27,7 +26,7 @@ func Connect() (*gorm.DB, error) {
 			Logger: logger.Default.LogMode(getLogLevel(*cfg)),
 		})
 		if e != nil {
-			err = fmt.Errorf("failed to connect database")
+			err = e
 			return
 		}
 
