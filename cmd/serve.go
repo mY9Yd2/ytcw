@@ -14,6 +14,7 @@ import (
 
 var serveCmd = &cobra.Command{
 	Use:     "serve",
+	Short:   "Start the REST API server",
 	Run:     serve,
 	GroupID: "main",
 }
