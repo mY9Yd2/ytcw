@@ -7,7 +7,7 @@ import (
 )
 
 type ChannelService interface {
-	GetChannels(p *model.Pagination) ([]model.ChannelResponse, *model.Pagination, error)
+	GetChannels(p *model.Pagination, category string) ([]model.ChannelResponse, *model.Pagination, error)
 }
 
 type channelService struct {
@@ -20,8 +20,8 @@ func NewChannelService(repo repository.ChannelRepository) ChannelService {
 	}
 }
 
-func (s *channelService) GetChannels(p *model.Pagination) ([]model.ChannelResponse, *model.Pagination, error) {
-	channels, total, err := s.channelRepo.FindAll(p)
+func (s *channelService) GetChannels(p *model.Pagination, category string) ([]model.ChannelResponse, *model.Pagination, error) {
+	channels, total, err := s.channelRepo.FindAll(p, category)
 	if err != nil {
 		return nil, nil, err
 	}

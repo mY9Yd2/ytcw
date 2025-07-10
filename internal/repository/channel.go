@@ -11,7 +11,7 @@ import (
 
 type ChannelRepository interface {
 	SaveChannel(channel *schema.Channel) error
-	FindAll(p *model.Pagination) ([]schema.Channel, int64, error)
+	FindAll(p *model.Pagination, category string) ([]schema.Channel, int64, error)
 	SoftDeleteChannelByUploaderID(uploaderID string) error
 	SoftDeleteChannelByChannelID(channelID string) error
 	GetStaleChannel(d time.Duration) (*schema.Channel, error)
@@ -43,11 +43,16 @@ func (r *channelRepository) UpdateChannelLastFetch(channelID uuid.UUID, lastFetc
 		Update("last_fetch", lastFetch).Error
 }
 
-func (r *channelRepository) FindAll(p *model.Pagination) ([]schema.Channel, int64, error) {
+func (r *channelRepository) FindAll(p *model.Pagination, category string) ([]schema.Channel, int64, error) {
 	var channels []schema.Channel
 	var total int64
 
 	db := r.db.Model(&schema.Channel{})
+
+	if category != "" {
+		db = db.Joins("JOIN categories ON categories.id = channels.category_refer").
+			Where("categories.name = ?", category)
+	}
 
 	if err := db.Count(&total).Error; err != nil {
 		return nil, 0, err

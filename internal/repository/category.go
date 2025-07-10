@@ -5,7 +5,6 @@ import (
 	model "github.com/mY9Yd2/ytcw/internal/model/api"
 	"github.com/mY9Yd2/ytcw/internal/schema"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type CategoryRepository interface {
@@ -26,10 +25,8 @@ func (r *categoryRepository) SaveCategory(category string) (uuid.UUID, error) {
 		Name: category,
 	}
 
-	if err := r.db.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "name"}},
-		DoNothing: true,
-	}).FirstOrCreate(&c).Error; err != nil {
+	if err := r.db.Where(schema.Category{Name: category}).
+		FirstOrCreate(&c).Error; err != nil {
 		return c.ID, err
 	}
 

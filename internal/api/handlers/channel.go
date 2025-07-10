@@ -22,8 +22,9 @@ func NewChannelHandler(logger zerolog.Logger, channelService service.ChannelServ
 
 func (h *ChannelHandler) ListChannels(w http.ResponseWriter, r *http.Request) {
 	p := model.NewPaginationFromRequest(r)
+	category := r.URL.Query().Get("category")
 
-	channels, pageMeta, err := h.ChannelService.GetChannels(p)
+	channels, pageMeta, err := h.ChannelService.GetChannels(p, category)
 	if err != nil {
 		h.Logger.Error().Err(err).Msg("Failed to get channels")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
