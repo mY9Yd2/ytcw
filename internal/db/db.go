@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"sync"
+	"time"
 )
 
 var once sync.Once
@@ -24,6 +25,9 @@ func Connect() (*gorm.DB, error) {
 
 		database, e := gorm.Open(postgres.Open(dsn), &gorm.Config{
 			Logger: logger.Default.LogMode(getLogLevel(*cfg)),
+			NowFunc: func() time.Time {
+				return time.Now().UTC()
+			},
 		})
 		if e != nil {
 			err = e
