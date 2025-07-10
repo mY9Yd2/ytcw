@@ -57,6 +57,8 @@ func LoadConfig() error {
 		viper.SetConfigName("config")
 		viper.SetConfigType("toml")
 
+		viper.AddConfigPath("/etc/ytcw/")
+		viper.AddConfigPath("$XDG_CONFIG_HOME/ytcw/")
 		viper.AddConfigPath("./config")
 
 		if e := viper.ReadInConfig(); e != nil {
