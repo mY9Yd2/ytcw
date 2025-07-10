@@ -20,8 +20,8 @@ func NewChannelService(repo repository.ChannelRepository) ChannelService {
 	}
 }
 
-func (r *channelService) GetChannels(p *model.Pagination) ([]model.ChannelResponse, *model.Pagination, error) {
-	channels, total, err := r.channelRepo.FindAll(p)
+func (s *channelService) GetChannels(p *model.Pagination) ([]model.ChannelResponse, *model.Pagination, error) {
+	channels, total, err := s.channelRepo.FindAll(p)
 	if err != nil {
 		return nil, nil, err
 	}

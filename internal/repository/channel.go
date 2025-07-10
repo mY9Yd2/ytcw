@@ -57,6 +57,7 @@ func (r *channelRepository) FindAll(p *model.Pagination) ([]schema.Channel, int6
 		Preload("Category").
 		Limit(int(p.Limit())).
 		Offset(int(p.Offset())).
+		Order("channel ASC").
 		Find(&channels).Error
 
 	return channels, total, err

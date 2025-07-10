@@ -19,8 +19,8 @@ func NewVideoService(repo repository.VideoRepository) VideoService {
 	}
 }
 
-func (r *videoService) GetVideos(p *model.Pagination) ([]model.VideoResponse, *model.Pagination, error) {
-	videos, total, err := r.videoRepo.FindAll(p)
+func (s *videoService) GetVideos(p *model.Pagination) ([]model.VideoResponse, *model.Pagination, error) {
+	videos, total, err := s.videoRepo.FindAll(p)
 	if err != nil {
 		return nil, nil, err
 	}
