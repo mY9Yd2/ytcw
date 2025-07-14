@@ -50,6 +50,7 @@ func (s *videoService) GetVideos(p *model.Pagination) ([]model.VideoResponse, *m
 			Thumbnail: video.Thumbnail,
 			Language:  video.Language,
 			Channel:   channel,
+			VideoType: video.VideoType,
 		})
 	}
 

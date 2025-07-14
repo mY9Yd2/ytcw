@@ -1,6 +1,7 @@
 package fetcher
 
 import (
+	videotype "github.com/mY9Yd2/ytcw/internal/model"
 	model "github.com/mY9Yd2/ytcw/internal/model/fetcher"
 	"github.com/rs/zerolog"
 )
@@ -43,11 +44,45 @@ func (f *Fetcher) GetChannelInfo(channel string) model.ChannelInfo {
 	}
 }
 
-func (f *Fetcher) FetchVideos(channel string) <-chan model.VideoInfo {
-	out := make(chan model.VideoInfo)
+func (f *Fetcher) FetchRegularVideos(channel string) <-chan model.VideoInfo {
+	rawOut := make(chan model.VideoInfo)
+	processedOut := make(chan model.VideoInfo)
 
 	go func() {
-		defer close(out)
+		defer close(rawOut)
+
+		stop := make(chan struct{})
+
+		fetchOpts := fetchOptions{
+			checkCutoff:  true,
+			addThumbnail: true,
+		}
+
+		yt := newYtDlp().
+			SetVideosURL(channel).
+			SetFetchOpts(fetchOpts)
+		if err := yt.fetch(f.Logger, rawOut, stop); err != nil {
+			f.Logger.Error().Err(err).Msg("Error fetching videos")
+		}
+	}()
+
+	go func() {
+		defer close(processedOut)
+		for video := range rawOut {
+			video.VideoType = videotype.VideoTypeRegular
+			processedOut <- video
+		}
+	}()
+
+	return processedOut
+}
+
+func (f *Fetcher) FetchShorts(channel string) <-chan model.VideoInfo {
+	rawOut := make(chan model.VideoInfo)
+	processedOut := make(chan model.VideoInfo)
+
+	go func() {
+		defer close(rawOut)
 
 		stop := make(chan struct{})
 
@@ -59,17 +94,18 @@ func (f *Fetcher) FetchVideos(channel string) <-chan model.VideoInfo {
 		yt := newYtDlp().
 			SetShortsURL(channel).
 			SetFetchOpts(fetchOpts)
-		if err := yt.fetch(f.Logger, out, stop); err != nil {
+		if err := yt.fetch(f.Logger, rawOut, stop); err != nil {
 			f.Logger.Error().Err(err).Msg("Error fetching shorts")
-		}
-
-		stop = make(chan struct{}) // Reset
-
-		yt.SetVideosURL(channel)
-		if err := yt.fetch(f.Logger, out, stop); err != nil {
-			f.Logger.Error().Err(err).Msg("Error fetching videos")
 		}
 	}()
 
-	return out
+	go func() {
+		defer close(processedOut)
+		for video := range rawOut {
+			video.VideoType = videotype.VideoTypeShort
+			processedOut <- video
+		}
+	}()
+
+	return processedOut
 }

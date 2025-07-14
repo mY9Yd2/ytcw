@@ -4,6 +4,7 @@ import (
 	"github.com/mY9Yd2/ytcw/internal/config"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/fetcher"
+	model "github.com/mY9Yd2/ytcw/internal/model/fetcher"
 	"github.com/mY9Yd2/ytcw/internal/repository"
 	"github.com/mY9Yd2/ytcw/internal/schema"
 	"github.com/rs/zerolog/log"
@@ -40,26 +41,8 @@ func daemon(cmd *cobra.Command, args []string) {
 			continue
 		}
 
-		videoStream := ytFetcher.FetchVideos(channel.UploaderID)
-
-		for info := range videoStream {
-			video := schema.Video{
-				Timestamp: time.Unix(info.Timestamp, 0),
-				FullTitle: info.FullTitle,
-				DisplayID: info.DisplayID,
-				Duration:  info.Duration,
-				Language:  &info.Language,
-				Thumbnail: info.Thumbnail,
-				Channel: schema.Channel{
-					UploaderID: info.UploaderID,
-					ChannelID:  info.ChannelID,
-					Channel:    info.Channel,
-				}}
-			video.Channel = *channel
-			if err := videoRepo.SaveVideo(&video); err != nil {
-				log.Warn().Err(err).Str("DisplayID", video.DisplayID).Msg("Failed to save video")
-			}
-		}
+		processVideos(&videoRepo, channel, ytFetcher.FetchShorts)
+		processVideos(&videoRepo, channel, ytFetcher.FetchRegularVideos)
 
 		err = channelRepo.UpdateChannelLastFetch(channel.ID, time.Now().UTC())
 		if err != nil {
@@ -67,5 +50,29 @@ func daemon(cmd *cobra.Command, args []string) {
 		}
 
 		time.Sleep(cfg.Fetcher.NoChannelRetryInterval)
+	}
+}
+
+func processVideos(videoRepo *repository.VideoRepository, channel *schema.Channel, fetchFunc func(string) <-chan model.VideoInfo) {
+	videoStream := fetchFunc(channel.UploaderID)
+	for info := range videoStream {
+		video := schema.Video{
+			Timestamp: time.Unix(info.Timestamp, 0),
+			FullTitle: info.FullTitle,
+			DisplayID: info.DisplayID,
+			Duration:  info.Duration,
+			Language:  &info.Language,
+			Thumbnail: info.Thumbnail,
+			VideoType: info.VideoType,
+			Channel: schema.Channel{
+				UploaderID: info.UploaderID,
+				ChannelID:  info.ChannelID,
+				Channel:    info.Channel,
+			},
+		}
+		video.Channel = *channel
+		if err := (*videoRepo).SaveVideo(&video); err != nil {
+			log.Warn().Err(err).Str("DisplayID", video.DisplayID).Msg("Failed to save video")
+		}
 	}
 }
