@@ -35,6 +35,10 @@ ytcw daemon # Start the fetcher daemon
 I plan to provide example systemd service files in the future.  
 The database columns and API fields are mostly aligned with the yt-dlp JSON output.
 
+## Development
+
+You can set up a local configuration inside the `config/` folder named `config.local.toml` and override only the settings you need, such as the database password.
+
 ### Rewrite Reason
 
 This is a rewrite of my previous yt-channel-watcher project, which was originally written in Python.
