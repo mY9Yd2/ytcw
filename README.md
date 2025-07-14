@@ -32,7 +32,8 @@ ytcw serve # Start the REST API server
 ytcw daemon # Start the fetcher daemon
 ```
 
-I plan to provide example systemd service files in the future.
+I plan to provide example systemd service files in the future.  
+The database columns and API fields are mostly aligned with the yt-dlp JSON output.
 
 ### Rewrite Reason
 
