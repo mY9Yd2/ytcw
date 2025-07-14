@@ -73,7 +73,8 @@ func (r *channelRepository) GetStaleChannel(d time.Duration) (*schema.Channel, e
 	cutoff := time.Now().UTC().Add(-d)
 
 	err := r.db.Where("last_fetch IS NULL OR last_fetch < ?", cutoff).
-		First(&channel).Error
+		Order(clause.OrderBy{Expression: clause.Expr{SQL: "RANDOM()"}}).
+		Take(&channel).Error
 	if err != nil {
 		return nil, err
 	}
