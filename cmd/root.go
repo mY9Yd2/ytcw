@@ -25,6 +25,7 @@ func init() {
 	adminGroup := cobra.Group{ID: "admin", Title: "Admin Commands"}
 	rootCmd.AddCommand(adminAddChannelCmd)
 	rootCmd.AddCommand(adminDeleteChannelCmd)
+	rootCmd.AddCommand(adminDisableChannelCmd)
 
 	rootCmd.AddGroup(&mainGroup, &adminGroup)
 }

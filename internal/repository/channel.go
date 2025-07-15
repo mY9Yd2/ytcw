@@ -16,6 +16,8 @@ type ChannelRepository interface {
 	SoftDeleteChannelByChannelID(channelID string) error
 	GetStaleChannel(d time.Duration) (*schema.Channel, error)
 	UpdateChannelLastFetch(channelID uuid.UUID, lastFetch time.Time) error
+	DisableChannelByUploaderID(uploaderID string, at, until time.Time) error
+	DisableChannelByChannelID(channelID string, at, until time.Time) error
 }
 
 type channelRepository struct {
@@ -70,9 +72,11 @@ func (r *channelRepository) FindAll(p *model.Pagination, category string) ([]sch
 
 func (r *channelRepository) GetStaleChannel(d time.Duration) (*schema.Channel, error) {
 	var channel schema.Channel
-	cutoff := time.Now().UTC().Add(-d)
+	now := time.Now().UTC()
+	cutoff := now.Add(-d)
 
 	err := r.db.Where("last_fetch IS NULL OR last_fetch < ?", cutoff).
+		Where("disabled_at IS NULL OR disabled_at > ? OR disabled_until <= ?", now, now).
 		Order(clause.OrderBy{Expression: clause.Expr{SQL: "RANDOM()"}}).
 		Take(&channel).Error
 	if err != nil {
@@ -114,4 +118,28 @@ func (r *channelRepository) softDeleteChannel(channel schema.Channel) error {
 	}
 
 	return tx.Commit().Error
+}
+
+func (r *channelRepository) DisableChannelByUploaderID(uploaderID string, at, until time.Time) error {
+	if err := r.db.Model(&schema.Channel{}).
+		Where("uploader_id = ?", uploaderID).
+		Updates(map[string]interface{}{
+			"disabled_at":    at,
+			"disabled_until": until,
+		}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *channelRepository) DisableChannelByChannelID(channelID string, at, until time.Time) error {
+	if err := r.db.Model(&schema.Channel{}).
+		Where("channel_id = ?", channelID).
+		Updates(map[string]interface{}{
+			"disabled_at":    at,
+			"disabled_until": until,
+		}).Error; err != nil {
+		return err
+	}
+	return nil
 }

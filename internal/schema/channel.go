@@ -11,9 +11,10 @@ type Channel struct {
 	CategoryRefer *uuid.UUID `gorm:"type:uuid;"`
 	Category      *Category  `gorm:"foreignKey:CategoryRefer;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 
-	UploaderID string     `gorm:"unique;size:50;"`
-	ChannelID  string     `gorm:"unique;size:30;"`
-	Channel    string     `gorm:"size:80;"`
-	LastFetch  *time.Time `gorm:"index"`
-	DisabledAt *time.Time `gorm:"index"`
+	UploaderID    string     `gorm:"unique;size:50;"`
+	ChannelID     string     `gorm:"unique;size:30;"`
+	Channel       string     `gorm:"size:80;"`
+	LastFetch     *time.Time `gorm:"index"`
+	DisabledAt    *time.Time `gorm:"index"`
+	DisabledUntil *time.Time `gorm:"index"`
 }

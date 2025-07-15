@@ -37,13 +37,14 @@ func (s *channelService) GetChannels(p *model.Pagination, category string) ([]mo
 		}
 
 		responses = append(responses, model.ChannelResponse{
-			ID:         ch.ID,
-			UploaderID: ch.UploaderID,
-			ChannelID:  ch.ChannelID,
-			Channel:    ch.Channel,
-			LastFetch:  ch.LastFetch,
-			DisabledAt: ch.DisabledAt,
-			Category:   category,
+			ID:            ch.ID,
+			UploaderID:    ch.UploaderID,
+			ChannelID:     ch.ChannelID,
+			Channel:       ch.Channel,
+			LastFetch:     ch.LastFetch,
+			DisabledAt:    ch.DisabledAt,
+			DisabledUntil: ch.DisabledUntil,
+			Category:      category,
 		})
 	}
 
