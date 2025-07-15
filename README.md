@@ -16,6 +16,9 @@ This project isn’t limited to the VTuber community - you can use it to fetch a
 
 Create a database in PostgreSQL, then edit the config file to fit your needs.
 
+First, create a config file at `/etc/ytcw/config.toml`  
+For an example, see the default config file: [config/config.toml](./config/config.toml)
+
 ```sh
 ytcw migrate # Run database migrations (does not create the database itself)
 ```
@@ -84,6 +87,8 @@ sudo systemctl enable --now ytcw.service
 ```sh
 sudo systemctl enable --now ytcw-api.service
 ```
+
+If you make any changes to the config file, please restart the services using systemd.
 
 ## Development
 
