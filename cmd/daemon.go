@@ -49,7 +49,7 @@ func daemon(cmd *cobra.Command, args []string) {
 			log.Warn().Err(err).Msg("Failed to update channel last fetch")
 		}
 
-		time.Sleep(cfg.Fetcher.NoChannelRetryInterval)
+		time.Sleep(cfg.Fetcher.PostFetchSleepDuration)
 	}
 }
 
