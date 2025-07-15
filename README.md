@@ -32,8 +32,58 @@ ytcw serve # Start the REST API server
 ytcw daemon # Start the fetcher daemon
 ```
 
-I plan to provide example systemd service files in the future.  
 The database columns and API fields are mostly aligned with the yt-dlp JSON output.
+
+## systemd service files
+
+Modify these files to suit your own setup, pay special attention to the `User` and `Group` options.  
+It’s also expected that the software is installed in `/usr/local/bin/` folder.
+
+```ini
+[Unit]
+Description=ytcw fetcher daemon
+After=network.target
+Requires=network-online.target
+
+[Service]
+Restart=always
+RestartSec=5
+Type=exec
+ExecStart=/usr/local/bin/ytcw daemon
+User=foo
+Group=foo
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```ini
+[Unit]
+Description=ytcw API server
+After=network.target
+Requires=network-online.target
+
+[Service]
+Restart=always
+RestartSec=1
+Type=exec
+ExecStart=/usr/local/bin/ytcw serve
+User=foo
+Group=foo
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Copy the service files into `/etc/systemd/system/` and then run:
+
+```sh
+sudo systemctl enable --now ytcw.service
+```
+
+```sh
+sudo systemctl enable --now ytcw-api.service
+```
 
 ## Development
 
@@ -51,4 +101,3 @@ Personally, I don’t really enjoy Python’s type hints - there’s no real enf
 
 Why Go?
 Initially, I considered a few other languages - mainly PHP and Java. PHP didn’t seem like the right tool for this job at first glance, and while the Java ecosystem is powerful, its learning curve is much higher for what I needed. So I decided to go with Go.
-
