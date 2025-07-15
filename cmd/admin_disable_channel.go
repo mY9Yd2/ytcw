@@ -24,8 +24,7 @@ func init() {
 	// but if someone wants to disable a channel "forever", it's a reasonable default.
 	yearsToDisable := 80 * 365 * 24 * time.Hour
 
-	adminDisableChannelCmd.Flags().DurationP("duration", "d", yearsToDisable, "Disable a channel for a given duration (required)")
-	_ = adminDisableChannelCmd.MarkFlagRequired("duration")
+	adminDisableChannelCmd.Flags().DurationP("duration", "d", yearsToDisable, "Disable a channel for a given duration")
 }
 
 func disableChannel(cmd *cobra.Command, args []string) {
