@@ -44,7 +44,7 @@ func getLogLevel(cfg config.Config) logger.LogLevel {
 	switch cfg.General.AppEnv {
 	case "production", "prod":
 		return logger.Silent
-	case "debug":
+	case "development":
 		return logger.Info
 	default:
 		return logger.Warn
