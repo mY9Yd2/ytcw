@@ -12,6 +12,8 @@ import (
 type ChannelRepository interface {
 	SaveChannel(channel *schema.Channel) error
 	FindAll(p *model.Pagination, category string) ([]schema.Channel, int64, error)
+	GetChannelByUploaderID(uploaderID string) (*schema.Channel, error)
+	GetChannelByChannelID(handle string) (*schema.Channel, error)
 	SoftDeleteChannelByUploaderID(uploaderID string) error
 	SoftDeleteChannelByChannelID(channelID string) error
 	GetStaleChannel(d time.Duration) (*schema.Channel, error)
@@ -35,6 +37,7 @@ func (r *channelRepository) SaveChannel(channel *schema.Channel) error {
 			"channel",
 			"channel_id",
 			"uploader_id",
+			"category_refer",
 		}),
 	}).Create(channel).Error
 }
@@ -68,6 +71,22 @@ func (r *channelRepository) FindAll(p *model.Pagination, category string) ([]sch
 		Find(&channels).Error
 
 	return channels, total, err
+}
+
+func (r *channelRepository) GetChannelByUploaderID(uploaderID string) (*schema.Channel, error) {
+	var channel schema.Channel
+	if err := r.db.Where("uploader_id = ?", uploaderID).First(&channel).Error; err != nil {
+		return nil, err
+	}
+	return &channel, nil
+}
+
+func (r *channelRepository) GetChannelByChannelID(handle string) (*schema.Channel, error) {
+	var channel schema.Channel
+	if err := r.db.Where("channel_id = ?", handle).First(&channel).Error; err != nil {
+		return nil, err
+	}
+	return &channel, nil
 }
 
 func (r *channelRepository) GetStaleChannel(d time.Duration) (*schema.Channel, error) {
