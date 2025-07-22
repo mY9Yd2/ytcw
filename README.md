@@ -37,6 +37,8 @@ ytcw daemon # Start the fetcher daemon
 
 The database columns and API fields are mostly aligned with the yt-dlp JSON output.
 
+More information can be found in the [docs](./DOCS.md).
+
 ## systemd service files
 
 Modify these files to suit your own setup, pay special attention to the `User` and `Group` options.  
