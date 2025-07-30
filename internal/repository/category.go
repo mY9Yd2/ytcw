@@ -25,9 +25,9 @@ func (r *categoryRepository) SaveCategory(category string) (uuid.UUID, error) {
 		Name: category,
 	}
 
-	if err := r.db.Where(schema.Category{Name: category}).
+	if err := r.db.Where("name ILIKE ?", category).
 		FirstOrCreate(&c).Error; err != nil {
-		return c.ID, err
+		return uuid.Nil, err
 	}
 
 	return c.ID, nil
