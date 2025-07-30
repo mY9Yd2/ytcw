@@ -75,7 +75,7 @@ func (r *channelRepository) FindAll(p *model.Pagination, category string) ([]sch
 
 func (r *channelRepository) GetChannelByUploaderID(uploaderID string) (*schema.Channel, error) {
 	var channel schema.Channel
-	if err := r.db.Where("uploader_id = ?", uploaderID).First(&channel).Error; err != nil {
+	if err := r.db.Where("uploader_id ILIKE ?", uploaderID).First(&channel).Error; err != nil {
 		return nil, err
 	}
 	return &channel, nil
@@ -107,7 +107,7 @@ func (r *channelRepository) GetStaleChannel(d time.Duration) (*schema.Channel, e
 
 func (r *channelRepository) SoftDeleteChannelByUploaderID(uploaderID string) error {
 	var channel schema.Channel
-	if err := r.db.Where("uploader_id = ?", uploaderID).Find(&channel).Error; err != nil {
+	if err := r.db.Where("uploader_id ILIKE ?", uploaderID).Find(&channel).Error; err != nil {
 		return err
 	}
 	return r.softDeleteChannel(channel)
@@ -141,7 +141,7 @@ func (r *channelRepository) softDeleteChannel(channel schema.Channel) error {
 
 func (r *channelRepository) DisableChannelByUploaderID(uploaderID string, at, until time.Time) error {
 	if err := r.db.Model(&schema.Channel{}).
-		Where("uploader_id = ?", uploaderID).
+		Where("uploader_id ILIKE ?", uploaderID).
 		Updates(map[string]interface{}{
 			"disabled_at":    at,
 			"disabled_until": until,
