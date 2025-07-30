@@ -83,6 +83,10 @@ WantedBy=multi-user.target
 Copy the service files into `/etc/systemd/system/` and then run:
 
 ```sh
+sudo systemctl daemon-reload
+```
+
+```sh
 sudo systemctl enable --now ytcw.service
 ```
 
