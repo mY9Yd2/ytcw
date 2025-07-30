@@ -33,7 +33,7 @@ func (f *Fetcher) GetChannelInfo(channel string) model.ChannelInfo {
 
 	info, ok := <-out
 	if !ok {
-		f.Logger.Fatal().Msg("No video info found")
+		f.Logger.Fatal().Str("channel", channel).Msg("No video info found")
 	}
 	close(stop)
 
