@@ -43,4 +43,6 @@ func deleteChannel(cmd *cobra.Command, args []string) {
 			log.Fatal().Err(err).Msg("Failed to delete channel")
 		}
 	}
+
+	log.Info().Msgf("Channel %s deleted successfully", channel)
 }

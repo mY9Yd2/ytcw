@@ -69,4 +69,6 @@ func addChannel(cmd *cobra.Command, args []string) {
 	if err := channelRepo.SaveChannel(&info); err != nil {
 		log.Fatal().Err(err).Msg("Failed to save channel")
 	}
+
+	log.Info().Msgf("Channel %s added successfully", info.Channel)
 }
