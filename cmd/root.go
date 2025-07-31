@@ -27,6 +27,7 @@ func init() {
 	rootCmd.AddCommand(adminDeleteChannelCmd)
 	rootCmd.AddCommand(adminDisableChannelCmd)
 	rootCmd.AddCommand(adminModifyChannelCmd)
+	rootCmd.AddCommand(adminDeleteCategoryCmd)
 
 	rootCmd.AddGroup(&mainGroup, &adminGroup)
 }

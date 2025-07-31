@@ -1,5 +1,9 @@
 # Docs
 
+## Notes
+
+Both YouTube handles and category names are treated as case-insensitive.
+
 ## Add channel
 
 Add a YouTube channel using either the @handle or the channel ID (starts with 'UC') for `-i`.  
@@ -40,3 +44,11 @@ ytcw disable-channel -i "@IRyS" -d "180h"
 ```
 
 Here, `-d` represents duration. Using hours is typically what you want.
+
+## Delete category
+
+Soft delete an empty category.
+
+```sh
+ytcw delete-category -c "hololive"
+```

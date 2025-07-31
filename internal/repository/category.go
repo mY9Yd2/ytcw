@@ -1,14 +1,26 @@
 package repository
 
 import (
+	"errors"
 	"github.com/google/uuid"
 	model "github.com/mY9Yd2/ytcw/internal/model/api"
 	"github.com/mY9Yd2/ytcw/internal/schema"
 	"gorm.io/gorm"
 )
 
+type CategoryNotFoundError struct {
+	Category string
+}
+
+type CategoryNotEmptyError struct {
+	Category string
+}
+
 type CategoryRepository interface {
 	SaveCategory(category string) (uuid.UUID, error)
+	DeleteCategory(category string) error
+	IsCategoryEmpty(categoryName string) (bool, error)
+	FindByName(categoryName string) (*schema.Category, error)
 	FindAll(p *model.Pagination) ([]schema.Category, int64, error)
 }
 
@@ -50,4 +62,55 @@ func (r *categoryRepository) FindAll(p *model.Pagination) ([]schema.Category, in
 		Find(&categories).Error
 
 	return categories, total, err
+}
+
+func (r *categoryRepository) IsCategoryEmpty(categoryName string) (bool, error) {
+	var count int64
+
+	if err := r.db.Model(&schema.Channel{}).
+		Joins("JOIN categories ON channels.category_refer = categories.id").
+		Where("categories.name ILIKE ?", categoryName).
+		Count(&count).Error; err != nil {
+		return false, err
+	}
+
+	return count == 0, nil
+}
+
+func (r *categoryRepository) DeleteCategory(categoryName string) error {
+	category, err := r.FindByName(categoryName)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return &CategoryNotFoundError{Category: categoryName}
+		}
+		return err
+	}
+
+	isEmpty, err := r.IsCategoryEmpty(categoryName)
+	if err != nil {
+		return err
+	}
+
+	if !isEmpty {
+		return &CategoryNotEmptyError{Category: categoryName}
+	}
+
+	return r.db.Delete(category).Error
+}
+
+func (r *categoryRepository) FindByName(categoryName string) (*schema.Category, error) {
+	var category schema.Category
+	if err := r.db.Where("name ILIKE ?", categoryName).
+		First(&category).Error; err != nil {
+		return nil, err
+	}
+	return &category, nil
+}
+
+func (e *CategoryNotFoundError) Error() string {
+	return "category not found"
+}
+
+func (e *CategoryNotEmptyError) Error() string {
+	return "cannot delete category: category contains channels"
 }
