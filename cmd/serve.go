@@ -43,7 +43,10 @@ func serve(cmd *cobra.Command, args []string) {
 	r := chi.NewRouter()
 	r.Use(api.ZerologMiddleware(log.Logger))
 
-	r.Mount("/swagger", httpSwagger.WrapHandler)
+	if cfg.IsDevelopment() {
+		r.Mount("/swagger", httpSwagger.WrapHandler)
+	}
+
 	r.Mount("/api/v1", api.Routes(log.Logger, channelService, videoService, categoryService))
 
 	log.Info().Str("address", cfg.Api.Address).Msg("Starting server")

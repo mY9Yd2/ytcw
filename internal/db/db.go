@@ -41,12 +41,8 @@ func Connect() (*gorm.DB, error) {
 }
 
 func getLogLevel(cfg config.Config) logger.LogLevel {
-	switch cfg.General.AppEnv {
-	case "production", "prod":
+	if cfg.IsProduction() {
 		return logger.Silent
-	case "development":
-		return logger.Info
-	default:
-		return logger.Warn
 	}
+	return logger.Warn
 }

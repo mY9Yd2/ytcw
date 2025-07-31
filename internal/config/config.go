@@ -102,3 +102,11 @@ func (c *Config) GetDSN() string {
 		c.DB.Host, c.DB.Port, c.DB.User, c.DB.Password, c.DB.Name, c.DB.SSLMode,
 	)
 }
+
+func (c *Config) IsProduction() bool {
+	return c.General.AppEnv == "production" || c.General.AppEnv == "prod"
+}
+
+func (c *Config) IsDevelopment() bool {
+	return c.General.AppEnv == "development" || c.General.AppEnv == "dev"
+}
