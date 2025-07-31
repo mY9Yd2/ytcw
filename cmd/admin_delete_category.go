@@ -15,7 +15,7 @@ var adminDeleteCategoryCmd = &cobra.Command{
 }
 
 func init() {
-	adminDeleteCategoryCmd.Flags().StringP("category", "c", "", "Category (required)")
+	adminDeleteCategoryCmd.Flags().StringP("category", "c", "", "Category name (required)")
 	_ = adminDeleteCategoryCmd.MarkFlagRequired("category")
 }
 

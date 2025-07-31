@@ -11,7 +11,7 @@ import (
 
 type ChannelRepository interface {
 	SaveChannel(channel *schema.Channel) error
-	FindAll(p *model.Pagination, category string) ([]schema.Channel, int64, error)
+	FindAll(p *model.Pagination, categoryName string) ([]schema.Channel, int64, error)
 	GetChannelByUploaderID(uploaderID string) (*schema.Channel, error)
 	GetChannelByChannelID(handle string) (*schema.Channel, error)
 	SoftDeleteChannelByUploaderID(uploaderID string) error
@@ -48,15 +48,15 @@ func (r *channelRepository) UpdateChannelLastFetch(channelID uuid.UUID, lastFetc
 		Update("last_fetch", lastFetch).Error
 }
 
-func (r *channelRepository) FindAll(p *model.Pagination, category string) ([]schema.Channel, int64, error) {
+func (r *channelRepository) FindAll(p *model.Pagination, categoryName string) ([]schema.Channel, int64, error) {
 	var channels []schema.Channel
 	var total int64
 
 	db := r.db.Model(&schema.Channel{})
 
-	if category != "" {
+	if categoryName != "" {
 		db = db.Joins("JOIN categories ON categories.id = channels.category_refer").
-			Where("categories.name ILIKE ?", category)
+			Where("categories.name ILIKE ?", categoryName)
 	}
 
 	if err := db.Count(&total).Error; err != nil {

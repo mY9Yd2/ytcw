@@ -158,7 +158,7 @@ paths:
         in: query
         name: page_size
         type: integer
-      - description: category
+      - description: category name
         in: query
         name: category
         type: string

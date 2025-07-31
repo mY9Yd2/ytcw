@@ -28,7 +28,7 @@ func NewChannelHandler(logger zerolog.Logger, channelService service.ChannelServ
 //	@Produce		json
 //	@Param			page		query int false "page"
 //	@Param			page_size	query int false "page size"
-//	@Param			category	query string false "category"
+//	@Param			category	query string false "category name"
 //	@Success		200	{object} model.PaginationResponse[model.ChannelResponse]{data=[]model.ChannelResponse,pagination=model.Pagination}
 //	@Router			/channels [get]
 func (h *ChannelHandler) ListChannels(w http.ResponseWriter, r *http.Request) {

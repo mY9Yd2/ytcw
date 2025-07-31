@@ -9,16 +9,16 @@ import (
 )
 
 type CategoryNotFoundError struct {
-	Category string
+	CategoryName string
 }
 
 type CategoryNotEmptyError struct {
-	Category string
+	CategoryName string
 }
 
 type CategoryRepository interface {
-	SaveCategory(category string) (uuid.UUID, error)
-	DeleteCategory(category string) error
+	SaveCategory(categoryName string) (uuid.UUID, error)
+	DeleteCategory(categoryName string) error
 	IsCategoryEmpty(categoryName string) (bool, error)
 	FindByName(categoryName string) (*schema.Category, error)
 	FindAll(p *model.Pagination) ([]schema.Category, int64, error)
@@ -32,12 +32,12 @@ func NewCategoryRepository(db *gorm.DB) CategoryRepository {
 	return &categoryRepository{db: db}
 }
 
-func (r *categoryRepository) SaveCategory(category string) (uuid.UUID, error) {
+func (r *categoryRepository) SaveCategory(categoryName string) (uuid.UUID, error) {
 	c := &schema.Category{
-		Name: category,
+		Name: categoryName,
 	}
 
-	if err := r.db.Where("name ILIKE ?", category).
+	if err := r.db.Where("name ILIKE ?", categoryName).
 		FirstOrCreate(&c).Error; err != nil {
 		return uuid.Nil, err
 	}
@@ -81,7 +81,7 @@ func (r *categoryRepository) DeleteCategory(categoryName string) error {
 	category, err := r.FindByName(categoryName)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return &CategoryNotFoundError{Category: categoryName}
+			return &CategoryNotFoundError{CategoryName: categoryName}
 		}
 		return err
 	}
@@ -92,7 +92,7 @@ func (r *categoryRepository) DeleteCategory(categoryName string) error {
 	}
 
 	if !isEmpty {
-		return &CategoryNotEmptyError{Category: categoryName}
+		return &CategoryNotEmptyError{CategoryName: categoryName}
 	}
 
 	return r.db.Delete(category).Error

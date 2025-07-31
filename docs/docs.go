@@ -96,7 +96,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "category",
+                        "description": "category name",
                         "name": "category",
                         "in": "query"
                     }
