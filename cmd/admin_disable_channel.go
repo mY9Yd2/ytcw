@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/logger"
 	"github.com/mY9Yd2/ytcw/internal/repository"
@@ -13,6 +14,7 @@ var adminDisableChannelCmd = &cobra.Command{
 	Use:     "disable-channel",
 	Short:   "Disable a channel",
 	Run:     disableChannel,
+	Args:    disableChannelArgsValidator,
 	GroupID: "admin",
 }
 
@@ -27,6 +29,19 @@ func init() {
 	adminDisableChannelCmd.Flags().DurationP("duration", "d", yearsToDisable, "Disable a channel for a given duration")
 }
 
+func disableChannelArgsValidator(cmd *cobra.Command, args []string) error {
+	disableDuration, err := cmd.Flags().GetDuration("duration")
+	if err != nil {
+		return fmt.Errorf("failed to get 'duration' flag")
+	}
+
+	if disableDuration <= 0 {
+		return fmt.Errorf("duration cannot be negative or zero")
+	}
+
+	return nil
+}
+
 func disableChannel(cmd *cobra.Command, args []string) {
 	log := logger.Pretty
 
@@ -35,10 +50,7 @@ func disableChannel(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to get 'id' flag")
 	}
 
-	disableDuration, err := cmd.Flags().GetDuration("duration")
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to get 'duration' flag")
-	}
+	disableDuration, _ := cmd.Flags().GetDuration("duration")
 
 	dbCon, err := db.Connect()
 	if err != nil {
