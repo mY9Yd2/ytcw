@@ -11,8 +11,8 @@ type PaginationResponse[T any] struct {
 }
 
 type Pagination struct {
-	Page       uint `json:"page"`
-	PageSize   uint `json:"page_size"`
+	Page       uint `json:"page" default:"1" minimum:"1"`
+	PageSize   uint `json:"page_size" default:"50" maximum:"50" minimum:"1"`
 	TotalRows  uint `json:"total_rows"`
 	TotalPages uint `json:"total_pages"`
 }

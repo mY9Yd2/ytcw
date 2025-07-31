@@ -9,6 +9,7 @@ import (
 	"github.com/mY9Yd2/ytcw/internal/service"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
 )
 
@@ -19,6 +20,12 @@ var serveCmd = &cobra.Command{
 	GroupID: "main",
 }
 
+// @title			ytcw API
+// @version			1.0
+// @license.name	MIT License
+// @license.url		https://github.com/mY9Yd2/ytcw/blob/main/LICENSE.md
+// @host			localhost:8080
+// @basePath		/api/v1
 func serve(cmd *cobra.Command, args []string) {
 	cfg := config.GetConfig()
 	dbCon, err := db.Connect()
@@ -36,6 +43,7 @@ func serve(cmd *cobra.Command, args []string) {
 	r := chi.NewRouter()
 	r.Use(api.ZerologMiddleware(log.Logger))
 
+	r.Mount("/swagger", httpSwagger.WrapHandler)
 	r.Mount("/api/v1", api.Routes(log.Logger, channelService, videoService, categoryService))
 
 	log.Info().Str("address", cfg.Api.Address).Msg("Starting server")

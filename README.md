@@ -37,7 +37,9 @@ ytcw daemon # Start the fetcher daemon
 
 The database columns and API fields are mostly aligned with the yt-dlp JSON output.
 
-More information can be found in the [docs](./DOCS.md).
+More information can be found in the [docs](./DOCS.md) file.
+
+Auto-generated Swagger documentation can be found in the [docs/](./docs/) folder or at the `/swagger/` URL (the trailing slash is important).
 
 ## systemd service files
 

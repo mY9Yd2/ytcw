@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/mY9Yd2/ytcw/cmd"
+	_ "github.com/mY9Yd2/ytcw/docs"
 	"github.com/rs/zerolog/log"
 )
 

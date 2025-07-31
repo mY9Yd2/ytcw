@@ -1,0 +1,335 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "ytcw API",
+        "contact": {},
+        "license": {
+            "name": "MIT License",
+            "url": "https://github.com/mY9Yd2/ytcw/blob/main/LICENSE.md"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/categories": {
+            "get": {
+                "description": "Get a paginated list of categories ordered by name in ascending order",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "List categories",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page size",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.PaginationResponse-model_CategoryResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.CategoryResponse"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/definitions/model.Pagination"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/channels": {
+            "get": {
+                "description": "Get a paginated list of channels ordered by channel in ascending order",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Channels"
+                ],
+                "summary": "List channels",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page size",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "category",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.PaginationResponse-model_ChannelResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.ChannelResponse"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/definitions/model.Pagination"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/videos": {
+            "get": {
+                "description": "Get a paginated list of videos ordered by created_at in descending order",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Videos"
+                ],
+                "summary": "List videos",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page size",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.PaginationResponse-model_VideoResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.VideoResponse"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "$ref": "#/definitions/model.Pagination"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.CategoryResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ChannelResponse": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/model.CategoryResponse"
+                },
+                "channel": {
+                    "type": "string"
+                },
+                "channel_id": {
+                    "type": "string"
+                },
+                "disabled_at": {
+                    "type": "string"
+                },
+                "disabled_until": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_fetch": {
+                    "type": "string"
+                },
+                "uploader_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ChannelSummary": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/model.CategoryResponse"
+                },
+                "channel": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Pagination": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1
+                },
+                "page_size": {
+                    "type": "integer",
+                    "default": 50,
+                    "maximum": 50,
+                    "minimum": 1
+                },
+                "total_pages": {
+                    "type": "integer"
+                },
+                "total_rows": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PaginationResponse-model_CategoryResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.CategoryResponse"
+                    }
+                },
+                "pagination": {}
+            }
+        },
+        "model.PaginationResponse-model_ChannelResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ChannelResponse"
+                    }
+                },
+                "pagination": {}
+            }
+        },
+        "model.PaginationResponse-model_VideoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.VideoResponse"
+                    }
+                },
+                "pagination": {}
+            }
+        },
+        "model.VideoResponse": {
+            "type": "object",
+            "properties": {
+                "channel": {
+                    "$ref": "#/definitions/model.ChannelSummary"
+                },
+                "display_id": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "integer"
+                },
+                "full_title": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "video_type": {
+                    "$ref": "#/definitions/model.VideoType"
+                }
+            }
+        },
+        "model.VideoType": {
+            "type": "string",
+            "enum": [
+                "regular",
+                "short"
+            ],
+            "x-enum-varnames": [
+                "VideoTypeRegular",
+                "VideoTypeShort"
+            ]
+        }
+    }
+}

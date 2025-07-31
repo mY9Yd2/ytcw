@@ -1,0 +1,216 @@
+basePath: /api/v1
+definitions:
+  model.CategoryResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  model.ChannelResponse:
+    properties:
+      category:
+        $ref: '#/definitions/model.CategoryResponse'
+      channel:
+        type: string
+      channel_id:
+        type: string
+      disabled_at:
+        type: string
+      disabled_until:
+        type: string
+      id:
+        type: string
+      last_fetch:
+        type: string
+      uploader_id:
+        type: string
+    type: object
+  model.ChannelSummary:
+    properties:
+      category:
+        $ref: '#/definitions/model.CategoryResponse'
+      channel:
+        type: string
+      id:
+        type: string
+    type: object
+  model.Pagination:
+    properties:
+      page:
+        default: 1
+        minimum: 1
+        type: integer
+      page_size:
+        default: 50
+        maximum: 50
+        minimum: 1
+        type: integer
+      total_pages:
+        type: integer
+      total_rows:
+        type: integer
+    type: object
+  model.PaginationResponse-model_CategoryResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.CategoryResponse'
+        type: array
+      pagination: {}
+    type: object
+  model.PaginationResponse-model_ChannelResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.ChannelResponse'
+        type: array
+      pagination: {}
+    type: object
+  model.PaginationResponse-model_VideoResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.VideoResponse'
+        type: array
+      pagination: {}
+    type: object
+  model.VideoResponse:
+    properties:
+      channel:
+        $ref: '#/definitions/model.ChannelSummary'
+      display_id:
+        type: string
+      duration:
+        type: integer
+      full_title:
+        type: string
+      id:
+        type: string
+      language:
+        type: string
+      thumbnail:
+        type: string
+      timestamp:
+        type: string
+      video_type:
+        $ref: '#/definitions/model.VideoType'
+    type: object
+  model.VideoType:
+    enum:
+    - regular
+    - short
+    type: string
+    x-enum-varnames:
+    - VideoTypeRegular
+    - VideoTypeShort
+host: localhost:8080
+info:
+  contact: {}
+  license:
+    name: MIT License
+    url: https://github.com/mY9Yd2/ytcw/blob/main/LICENSE.md
+  title: ytcw API
+  version: "1.0"
+paths:
+  /categories:
+    get:
+      description: Get a paginated list of categories ordered by name in ascending
+        order
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.PaginationResponse-model_CategoryResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.CategoryResponse'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/model.Pagination'
+              type: object
+      summary: List categories
+      tags:
+      - Categories
+  /channels:
+    get:
+      description: Get a paginated list of channels ordered by channel in ascending
+        order
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        type: integer
+      - description: category
+        in: query
+        name: category
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.PaginationResponse-model_ChannelResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.ChannelResponse'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/model.Pagination'
+              type: object
+      summary: List channels
+      tags:
+      - Channels
+  /videos:
+    get:
+      description: Get a paginated list of videos ordered by created_at in descending
+        order
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.PaginationResponse-model_VideoResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.VideoResponse'
+                  type: array
+                pagination:
+                  $ref: '#/definitions/model.Pagination'
+              type: object
+      summary: List videos
+      tags:
+      - Videos
+swagger: "2.0"

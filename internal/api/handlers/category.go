@@ -20,6 +20,16 @@ func NewCategoryHandler(logger zerolog.Logger, categoryService service.CategoryS
 	}
 }
 
+// ListCategories godoc
+//
+//	@Summary		List categories
+//	@Description	Get a paginated list of categories ordered by name in ascending order
+//	@Tags			Categories
+//	@Produce		json
+//	@Param			page		query int false "page"
+//	@Param			page_size	query int false "page size"
+//	@Success		200	{object} model.PaginationResponse[model.CategoryResponse]{data=[]model.CategoryResponse,pagination=model.Pagination}
+//	@Router			/categories [get]
 func (h *CategoryHandler) ListCategories(w http.ResponseWriter, r *http.Request) {
 	p := r.Context().Value("pagination").(*model.Pagination)
 

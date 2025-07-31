@@ -20,6 +20,16 @@ func NewVideoHandler(logger zerolog.Logger, videoService service.VideoService) *
 	}
 }
 
+// ListVideos godoc
+//
+//	@Summary		List videos
+//	@Description	Get a paginated list of videos ordered by created_at in descending order
+//	@Tags			Videos
+//	@Produce		json
+//	@Param			page		query int false "page"
+//	@Param			page_size	query int false "page size"
+//	@Success		200	{object} model.PaginationResponse[model.VideoResponse]{data=[]model.VideoResponse,pagination=model.Pagination}
+//	@Router			/videos [get]
 func (h *VideoHandler) ListVideos(w http.ResponseWriter, r *http.Request) {
 	p := model.NewPaginationFromRequest(r)
 

@@ -56,7 +56,7 @@ func (r *channelRepository) FindAll(p *model.Pagination, category string) ([]sch
 
 	if category != "" {
 		db = db.Joins("JOIN categories ON categories.id = channels.category_refer").
-			Where("categories.name = ?", category)
+			Where("categories.name ILIKE ?", category)
 	}
 
 	if err := db.Count(&total).Error; err != nil {

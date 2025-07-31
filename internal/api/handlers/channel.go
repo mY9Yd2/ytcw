@@ -20,6 +20,17 @@ func NewChannelHandler(logger zerolog.Logger, channelService service.ChannelServ
 	}
 }
 
+// ListChannels godoc
+//
+//	@Summary		List channels
+//	@Description	Get a paginated list of channels ordered by channel in ascending order
+//	@Tags			Channels
+//	@Produce		json
+//	@Param			page		query int false "page"
+//	@Param			page_size	query int false "page size"
+//	@Param			category	query string false "category"
+//	@Success		200	{object} model.PaginationResponse[model.ChannelResponse]{data=[]model.ChannelResponse,pagination=model.Pagination}
+//	@Router			/channels [get]
 func (h *ChannelHandler) ListChannels(w http.ResponseWriter, r *http.Request) {
 	p := model.NewPaginationFromRequest(r)
 	category := r.URL.Query().Get("category")
