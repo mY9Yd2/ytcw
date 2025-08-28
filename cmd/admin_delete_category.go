@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/mY9Yd2/ytcw/internal/content"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/logger"
-	"github.com/mY9Yd2/ytcw/internal/repository"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +31,7 @@ func deleteCategory(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
-	categoryRepo := repository.NewCategoryRepository(dbCon)
+	categoryRepo := content.NewCategoryRepository(dbCon)
 
 	if err = categoryRepo.DeleteCategory(category); err != nil {
 		log.Fatal().Err(err).Msg("Failed to delete category")

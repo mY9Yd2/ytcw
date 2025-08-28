@@ -1,8 +1,7 @@
 package fetcher
 
 import (
-	videotype "github.com/mY9Yd2/ytcw/internal/model"
-	model "github.com/mY9Yd2/ytcw/internal/model/fetcher"
+	"github.com/mY9Yd2/ytcw/internal/content"
 	"github.com/rs/zerolog"
 )
 
@@ -11,8 +10,8 @@ type Fetcher struct {
 	ytdlp  ytdlp
 }
 
-func (f *Fetcher) GetChannelInfo(channel string) model.ChannelInfo {
-	out := make(chan model.VideoInfo)
+func (f *Fetcher) GetChannelInfo(channel string) ChannelInfo {
+	out := make(chan VideoInfo)
 	stop := make(chan struct{})
 
 	go func() {
@@ -37,16 +36,16 @@ func (f *Fetcher) GetChannelInfo(channel string) model.ChannelInfo {
 	}
 	close(stop)
 
-	return model.ChannelInfo{
+	return ChannelInfo{
 		UploaderID: info.UploaderID,
 		ChannelID:  info.ChannelID,
 		Channel:    info.Channel,
 	}
 }
 
-func (f *Fetcher) FetchRegularVideos(channel string) <-chan model.VideoInfo {
-	rawOut := make(chan model.VideoInfo)
-	processedOut := make(chan model.VideoInfo)
+func (f *Fetcher) FetchRegularVideos(channel string) <-chan VideoInfo {
+	rawOut := make(chan VideoInfo)
+	processedOut := make(chan VideoInfo)
 
 	go func() {
 		defer close(rawOut)
@@ -69,7 +68,7 @@ func (f *Fetcher) FetchRegularVideos(channel string) <-chan model.VideoInfo {
 	go func() {
 		defer close(processedOut)
 		for video := range rawOut {
-			video.VideoType = videotype.VideoTypeRegular
+			video.VideoType = content.VideoTypeRegular
 			processedOut <- video
 		}
 	}()
@@ -77,9 +76,9 @@ func (f *Fetcher) FetchRegularVideos(channel string) <-chan model.VideoInfo {
 	return processedOut
 }
 
-func (f *Fetcher) FetchShorts(channel string) <-chan model.VideoInfo {
-	rawOut := make(chan model.VideoInfo)
-	processedOut := make(chan model.VideoInfo)
+func (f *Fetcher) FetchShorts(channel string) <-chan VideoInfo {
+	rawOut := make(chan VideoInfo)
+	processedOut := make(chan VideoInfo)
 
 	go func() {
 		defer close(rawOut)
@@ -102,7 +101,7 @@ func (f *Fetcher) FetchShorts(channel string) <-chan model.VideoInfo {
 	go func() {
 		defer close(processedOut)
 		for video := range rawOut {
-			video.VideoType = videotype.VideoTypeShort
+			video.VideoType = content.VideoTypeShort
 			processedOut <- video
 		}
 	}()

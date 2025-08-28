@@ -1,4 +1,4 @@
-package model
+package content
 
 type VideoType string
 

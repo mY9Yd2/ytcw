@@ -1,16 +1,17 @@
 package cmd
 
 import (
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/mY9Yd2/ytcw/internal/api"
+	"github.com/mY9Yd2/ytcw/internal/common"
 	"github.com/mY9Yd2/ytcw/internal/config"
+	"github.com/mY9Yd2/ytcw/internal/content"
 	"github.com/mY9Yd2/ytcw/internal/db"
-	"github.com/mY9Yd2/ytcw/internal/repository"
-	"github.com/mY9Yd2/ytcw/internal/service"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	httpSwagger "github.com/swaggo/http-swagger"
-	"net/http"
 )
 
 var serveCmd = &cobra.Command{
@@ -33,15 +34,15 @@ func serve(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 
-	channelRepo := repository.NewChannelRepository(dbCon)
-	channelService := service.NewChannelService(channelRepo)
-	videoRepo := repository.NewVideoRepository(dbCon)
-	videoService := service.NewVideoService(videoRepo)
-	categoryRepo := repository.NewCategoryRepository(dbCon)
-	categoryService := service.NewCategoryService(categoryRepo)
+	channelRepo := content.NewChannelRepository(dbCon)
+	channelService := content.NewChannelService(channelRepo)
+	videoRepo := content.NewVideoRepository(dbCon)
+	videoService := content.NewVideoService(videoRepo)
+	categoryRepo := content.NewCategoryRepository(dbCon)
+	categoryService := content.NewCategoryService(categoryRepo)
 
 	r := chi.NewRouter()
-	r.Use(api.ZerologMiddleware(log.Logger))
+	r.Use(common.ZerologMiddleware(log.Logger))
 
 	if cfg.IsDevelopment() {
 		r.Mount("/swagger", httpSwagger.WrapHandler)

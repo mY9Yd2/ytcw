@@ -1,15 +1,14 @@
 package cmd
 
 import (
+	"time"
+
 	"github.com/mY9Yd2/ytcw/internal/config"
+	"github.com/mY9Yd2/ytcw/internal/content"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/fetcher"
-	model "github.com/mY9Yd2/ytcw/internal/model/fetcher"
-	"github.com/mY9Yd2/ytcw/internal/repository"
-	"github.com/mY9Yd2/ytcw/internal/schema"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 var daemonCmd = &cobra.Command{
@@ -25,8 +24,8 @@ func daemon(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 
-	channelRepo := repository.NewChannelRepository(dbCon)
-	videoRepo := repository.NewVideoRepository(dbCon)
+	channelRepo := content.NewChannelRepository(dbCon)
+	videoRepo := content.NewVideoRepository(dbCon)
 	cfg := config.GetConfig()
 	ytFetcher := fetcher.Fetcher{
 		Logger: log.Logger,
@@ -53,10 +52,10 @@ func daemon(cmd *cobra.Command, args []string) {
 	}
 }
 
-func processVideos(videoRepo *repository.VideoRepository, channel *schema.Channel, fetchFunc func(string) <-chan model.VideoInfo) {
+func processVideos(videoRepo *content.VideoRepository, channel *content.Channel, fetchFunc func(string) <-chan fetcher.VideoInfo) {
 	videoStream := fetchFunc(channel.UploaderID)
 	for info := range videoStream {
-		video := schema.Video{
+		video := content.Video{
 			Timestamp: time.Unix(info.Timestamp, 0),
 			FullTitle: info.FullTitle,
 			DisplayID: info.DisplayID,
@@ -64,7 +63,7 @@ func processVideos(videoRepo *repository.VideoRepository, channel *schema.Channe
 			Language:  &info.Language,
 			Thumbnail: info.Thumbnail,
 			VideoType: info.VideoType,
-			Channel: schema.Channel{
+			Channel: content.Channel{
 				UploaderID: info.UploaderID,
 				ChannelID:  info.ChannelID,
 				Channel:    info.Channel,

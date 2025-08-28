@@ -2,12 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/mY9Yd2/ytcw/internal/db"
-	"github.com/mY9Yd2/ytcw/internal/logger"
-	"github.com/mY9Yd2/ytcw/internal/repository"
-	"github.com/spf13/cobra"
 	"strings"
 	"time"
+
+	"github.com/mY9Yd2/ytcw/internal/content"
+	"github.com/mY9Yd2/ytcw/internal/db"
+	"github.com/mY9Yd2/ytcw/internal/logger"
+	"github.com/spf13/cobra"
 )
 
 var adminDisableChannelCmd = &cobra.Command{
@@ -56,7 +57,7 @@ func disableChannel(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
-	channelRepo := repository.NewChannelRepository(dbCon)
+	channelRepo := content.NewChannelRepository(dbCon)
 
 	now := time.Now().UTC()
 	disabledUntil := now.Add(disableDuration)

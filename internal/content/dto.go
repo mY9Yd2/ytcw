@@ -1,8 +1,9 @@
-package model
+package content
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type ChannelResponse struct {
@@ -20,4 +21,21 @@ type ChannelSummary struct {
 	ID       uuid.UUID         `json:"id"`
 	Channel  string            `json:"channel"`
 	Category *CategoryResponse `json:"category"`
+}
+
+type VideoResponse struct {
+	ID        uuid.UUID      `json:"id"`
+	Timestamp time.Time      `json:"timestamp"`
+	FullTitle string         `json:"full_title"`
+	DisplayID string         `json:"display_id"`
+	Duration  uint           `json:"duration"`
+	Language  *string        `json:"language"`
+	Thumbnail string         `json:"thumbnail"`
+	Channel   ChannelSummary `json:"channel"`
+	VideoType VideoType      `json:"video_type"`
+}
+
+type CategoryResponse struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }

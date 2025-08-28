@@ -1,10 +1,10 @@
-package repository
+package content
 
 import (
 	"errors"
+
 	"github.com/google/uuid"
-	model "github.com/mY9Yd2/ytcw/internal/model/api"
-	"github.com/mY9Yd2/ytcw/internal/schema"
+	"github.com/mY9Yd2/ytcw/internal/common"
 	"gorm.io/gorm"
 )
 
@@ -20,8 +20,8 @@ type CategoryRepository interface {
 	SaveCategory(categoryName string) (uuid.UUID, error)
 	DeleteCategory(categoryName string) error
 	IsCategoryEmpty(categoryName string) (bool, error)
-	FindByName(categoryName string) (*schema.Category, error)
-	FindAll(p *model.Pagination) ([]schema.Category, int64, error)
+	FindByName(categoryName string) (*Category, error)
+	FindAll(p *common.Pagination) ([]Category, int64, error)
 }
 
 type categoryRepository struct {
@@ -33,7 +33,7 @@ func NewCategoryRepository(db *gorm.DB) CategoryRepository {
 }
 
 func (r *categoryRepository) SaveCategory(categoryName string) (uuid.UUID, error) {
-	c := &schema.Category{
+	c := &Category{
 		Name: categoryName,
 	}
 
@@ -45,11 +45,11 @@ func (r *categoryRepository) SaveCategory(categoryName string) (uuid.UUID, error
 	return c.ID, nil
 }
 
-func (r *categoryRepository) FindAll(p *model.Pagination) ([]schema.Category, int64, error) {
-	var categories []schema.Category
+func (r *categoryRepository) FindAll(p *common.Pagination) ([]Category, int64, error) {
+	var categories []Category
 	var total int64
 
-	db := r.db.Model(&schema.Category{})
+	db := r.db.Model(&Category{})
 
 	if err := db.Count(&total).Error; err != nil {
 		return nil, 0, err
@@ -67,7 +67,7 @@ func (r *categoryRepository) FindAll(p *model.Pagination) ([]schema.Category, in
 func (r *categoryRepository) IsCategoryEmpty(categoryName string) (bool, error) {
 	var count int64
 
-	if err := r.db.Model(&schema.Channel{}).
+	if err := r.db.Model(&Channel{}).
 		Joins("JOIN categories ON channels.category_refer = categories.id").
 		Where("categories.name ILIKE ?", categoryName).
 		Count(&count).Error; err != nil {
@@ -98,8 +98,8 @@ func (r *categoryRepository) DeleteCategory(categoryName string) error {
 	return r.db.Delete(category).Error
 }
 
-func (r *categoryRepository) FindByName(categoryName string) (*schema.Category, error) {
-	var category schema.Category
+func (r *categoryRepository) FindByName(categoryName string) (*Category, error) {
+	var category Category
 	if err := r.db.Where("name ILIKE ?", categoryName).
 		First(&category).Error; err != nil {
 		return nil, err

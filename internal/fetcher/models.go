@@ -1,6 +1,12 @@
-package model
+package fetcher
 
-import "github.com/mY9Yd2/ytcw/internal/model"
+import "github.com/mY9Yd2/ytcw/internal/content"
+
+type ChannelInfo struct {
+	UploaderID string `json:"uploader_id"`
+	ChannelID  string `json:"channel_id"`
+	Channel    string `json:"channel"`
+}
 
 type VideoInfo struct {
 	ChannelInfo
@@ -10,5 +16,5 @@ type VideoInfo struct {
 	Duration  uint   `json:"duration"`
 	Language  string `json:"language"`
 	Thumbnail string
-	VideoType model.VideoType
+	VideoType content.VideoType
 }

@@ -1,15 +1,14 @@
-package repository
+package content
 
 import (
-	model "github.com/mY9Yd2/ytcw/internal/model/api"
-	"github.com/mY9Yd2/ytcw/internal/schema"
+	"github.com/mY9Yd2/ytcw/internal/common"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 type VideoRepository interface {
-	SaveVideo(video *schema.Video) error
-	FindAll(p *model.Pagination) ([]schema.Video, int64, error)
+	SaveVideo(video *Video) error
+	FindAll(p *common.Pagination) ([]Video, int64, error)
 }
 
 type videoRepository struct {
@@ -20,15 +19,15 @@ func NewVideoRepository(db *gorm.DB) VideoRepository {
 	return &videoRepository{db: db}
 }
 
-func (r *videoRepository) SaveVideo(video *schema.Video) error {
-	var channel schema.Channel
+func (r *videoRepository) SaveVideo(video *Video) error {
+	var channel Channel
 	if err := r.db.Where("uploader_id = ?", video.Channel.UploaderID).
 		First(&channel, &video.Channel).Error; err != nil {
 		return err
 	}
 
 	video.ChannelRefer = channel.ID
-	
+
 	return r.db.Clauses(clause.OnConflict{
 		Columns: []clause.Column{{Name: "display_id"}},
 		DoUpdates: clause.AssignmentColumns([]string{
@@ -40,11 +39,11 @@ func (r *videoRepository) SaveVideo(video *schema.Video) error {
 	}).Create(video).Error
 }
 
-func (r *videoRepository) FindAll(p *model.Pagination) ([]schema.Video, int64, error) {
-	var videos []schema.Video
+func (r *videoRepository) FindAll(p *common.Pagination) ([]Video, int64, error) {
+	var videos []Video
 	var total int64
 
-	db := r.db.Model(&schema.Video{})
+	db := r.db.Model(&Video{})
 
 	if err := db.Count(&total).Error; err != nil {
 		return nil, 0, err

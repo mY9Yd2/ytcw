@@ -1,12 +1,12 @@
 package cmd
 
 import (
+	"strings"
+
+	"github.com/mY9Yd2/ytcw/internal/content"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/logger"
-	"github.com/mY9Yd2/ytcw/internal/repository"
-	"github.com/mY9Yd2/ytcw/internal/schema"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 var adminModifyChannelCmd = &cobra.Command{
@@ -51,9 +51,9 @@ func modifyChannel(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 
-	channelRepo := repository.NewChannelRepository(dbCon)
+	channelRepo := content.NewChannelRepository(dbCon)
 
-	var existingChannel *schema.Channel
+	var existingChannel *content.Channel
 	if strings.HasPrefix(channel, "@") {
 		existingChannel, err = channelRepo.GetChannelByUploaderID(channel)
 		if err != nil {
@@ -67,7 +67,7 @@ func modifyChannel(cmd *cobra.Command, args []string) {
 	}
 
 	if category != "" {
-		categoryRepo := repository.NewCategoryRepository(dbCon)
+		categoryRepo := content.NewCategoryRepository(dbCon)
 		id, err := categoryRepo.SaveCategory(category)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed to save category")

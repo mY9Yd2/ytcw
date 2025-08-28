@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/mY9Yd2/ytcw/internal/content"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/logger"
-	"github.com/mY9Yd2/ytcw/internal/schema"
 	"github.com/spf13/cobra"
 )
 
@@ -22,7 +22,7 @@ func migrate(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 
-	err = database.AutoMigrate(&schema.Category{}, &schema.Channel{}, &schema.Video{})
+	err = database.AutoMigrate(&content.Category{}, &content.Channel{}, &content.Video{})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to auto migrate the database")
 	}

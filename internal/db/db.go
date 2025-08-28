@@ -1,12 +1,13 @@
 package db
 
 import (
+	"sync"
+	"time"
+
 	"github.com/mY9Yd2/ytcw/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"sync"
-	"time"
 )
 
 var once sync.Once

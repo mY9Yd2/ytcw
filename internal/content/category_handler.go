@@ -1,19 +1,19 @@
-package api
+package content
 
 import (
 	"encoding/json"
-	model "github.com/mY9Yd2/ytcw/internal/model/api"
-	"github.com/mY9Yd2/ytcw/internal/service"
-	"github.com/rs/zerolog"
 	"net/http"
+
+	"github.com/mY9Yd2/ytcw/internal/common"
+	"github.com/rs/zerolog"
 )
 
 type CategoryHandler struct {
 	Logger          zerolog.Logger
-	CategoryService service.CategoryService
+	CategoryService CategoryService
 }
 
-func NewCategoryHandler(logger zerolog.Logger, categoryService service.CategoryService) *CategoryHandler {
+func NewCategoryHandler(logger zerolog.Logger, categoryService CategoryService) *CategoryHandler {
 	return &CategoryHandler{
 		Logger:          logger,
 		CategoryService: categoryService,
@@ -28,10 +28,10 @@ func NewCategoryHandler(logger zerolog.Logger, categoryService service.CategoryS
 //	@Produce		json
 //	@Param			page		query int false "page"
 //	@Param			page_size	query int false "page size"
-//	@Success		200	{object} model.PaginationResponse[model.CategoryResponse]{data=[]model.CategoryResponse,pagination=model.Pagination}
+//	@Success		200	{object} common.PaginationResponse[CategoryResponse]{data=[]CategoryResponse,pagination=common.Pagination}
 //	@Router			/categories [get]
 func (h *CategoryHandler) ListCategories(w http.ResponseWriter, r *http.Request) {
-	p := r.Context().Value("pagination").(*model.Pagination)
+	p := r.Context().Value("pagination").(*common.Pagination)
 
 	categories, pageMeta, err := h.CategoryService.GetCategories(p)
 	if err != nil {
@@ -43,7 +43,7 @@ func (h *CategoryHandler) ListCategories(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	resp := model.PaginationResponse[model.CategoryResponse]{
+	resp := common.PaginationResponse[CategoryResponse]{
 		Data:       categories,
 		Pagination: pageMeta,
 	}

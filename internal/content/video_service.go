@@ -1,47 +1,44 @@
-package service
+package content
 
-import (
-	model "github.com/mY9Yd2/ytcw/internal/model/api"
-	"github.com/mY9Yd2/ytcw/internal/repository"
-)
+import "github.com/mY9Yd2/ytcw/internal/common"
 
 type VideoService interface {
-	GetVideos(p *model.Pagination) ([]model.VideoResponse, *model.Pagination, error)
+	GetVideos(p *common.Pagination) ([]VideoResponse, *common.Pagination, error)
 }
 
 type videoService struct {
-	videoRepo repository.VideoRepository
+	videoRepo VideoRepository
 }
 
-func NewVideoService(repo repository.VideoRepository) VideoService {
+func NewVideoService(repo VideoRepository) VideoService {
 	return &videoService{
 		videoRepo: repo,
 	}
 }
 
-func (s *videoService) GetVideos(p *model.Pagination) ([]model.VideoResponse, *model.Pagination, error) {
+func (s *videoService) GetVideos(p *common.Pagination) ([]VideoResponse, *common.Pagination, error) {
 	videos, total, err := s.videoRepo.FindAll(p)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	var responses []model.VideoResponse
+	var responses []VideoResponse
 	for _, video := range videos {
-		var category *model.CategoryResponse
+		var category *CategoryResponse
 		if video.Channel.Category != nil {
-			category = &model.CategoryResponse{
+			category = &CategoryResponse{
 				ID:   video.Channel.Category.ID,
 				Name: video.Channel.Category.Name,
 			}
 		}
 
-		channel := model.ChannelSummary{
+		channel := ChannelSummary{
 			ID:       video.Channel.ID,
 			Channel:  video.Channel.Channel,
 			Category: category,
 		}
 
-		responses = append(responses, model.VideoResponse{
+		responses = append(responses, VideoResponse{
 			ID:        video.ID,
 			Timestamp: video.Timestamp,
 			FullTitle: video.FullTitle,
@@ -58,7 +55,7 @@ func (s *videoService) GetVideos(p *model.Pagination) ([]model.VideoResponse, *m
 	p.TotalPages = (p.TotalRows + p.PageSize - 1) / p.PageSize
 
 	if responses == nil {
-		responses = []model.VideoResponse{}
+		responses = []VideoResponse{}
 	}
 
 	return responses, p, nil

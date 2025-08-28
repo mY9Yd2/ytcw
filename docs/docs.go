@@ -49,7 +49,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/model.PaginationResponse-model_CategoryResponse"
+                                    "$ref": "#/definitions/common.PaginationResponse-content_CategoryResponse"
                                 },
                                 {
                                     "type": "object",
@@ -57,11 +57,11 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.CategoryResponse"
+                                                "$ref": "#/definitions/content.CategoryResponse"
                                             }
                                         },
                                         "pagination": {
-                                            "$ref": "#/definitions/model.Pagination"
+                                            "$ref": "#/definitions/common.Pagination"
                                         }
                                     }
                                 }
@@ -107,7 +107,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/model.PaginationResponse-model_ChannelResponse"
+                                    "$ref": "#/definitions/common.PaginationResponse-content_ChannelResponse"
                                 },
                                 {
                                     "type": "object",
@@ -115,11 +115,11 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.ChannelResponse"
+                                                "$ref": "#/definitions/content.ChannelResponse"
                                             }
                                         },
                                         "pagination": {
-                                            "$ref": "#/definitions/model.Pagination"
+                                            "$ref": "#/definitions/common.Pagination"
                                         }
                                     }
                                 }
@@ -159,7 +159,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/model.PaginationResponse-model_VideoResponse"
+                                    "$ref": "#/definitions/common.PaginationResponse-content_VideoResponse"
                                 },
                                 {
                                     "type": "object",
@@ -167,11 +167,11 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.VideoResponse"
+                                                "$ref": "#/definitions/content.VideoResponse"
                                             }
                                         },
                                         "pagination": {
-                                            "$ref": "#/definitions/model.Pagination"
+                                            "$ref": "#/definitions/common.Pagination"
                                         }
                                     }
                                 }
@@ -183,7 +183,65 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.CategoryResponse": {
+        "common.Pagination": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1
+                },
+                "page_size": {
+                    "type": "integer",
+                    "default": 50,
+                    "maximum": 50,
+                    "minimum": 1
+                },
+                "total_pages": {
+                    "type": "integer"
+                },
+                "total_rows": {
+                    "type": "integer"
+                }
+            }
+        },
+        "common.PaginationResponse-content_CategoryResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/content.CategoryResponse"
+                    }
+                },
+                "pagination": {}
+            }
+        },
+        "common.PaginationResponse-content_ChannelResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/content.ChannelResponse"
+                    }
+                },
+                "pagination": {}
+            }
+        },
+        "common.PaginationResponse-content_VideoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/content.VideoResponse"
+                    }
+                },
+                "pagination": {}
+            }
+        },
+        "content.CategoryResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -194,11 +252,11 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ChannelResponse": {
+        "content.ChannelResponse": {
             "type": "object",
             "properties": {
                 "category": {
-                    "$ref": "#/definitions/model.CategoryResponse"
+                    "$ref": "#/definitions/content.CategoryResponse"
                 },
                 "channel": {
                     "type": "string"
@@ -223,11 +281,11 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ChannelSummary": {
+        "content.ChannelSummary": {
             "type": "object",
             "properties": {
                 "category": {
-                    "$ref": "#/definitions/model.CategoryResponse"
+                    "$ref": "#/definitions/content.CategoryResponse"
                 },
                 "channel": {
                     "type": "string"
@@ -237,69 +295,11 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Pagination": {
-            "type": "object",
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "default": 1,
-                    "minimum": 1
-                },
-                "page_size": {
-                    "type": "integer",
-                    "default": 50,
-                    "maximum": 50,
-                    "minimum": 1
-                },
-                "total_pages": {
-                    "type": "integer"
-                },
-                "total_rows": {
-                    "type": "integer"
-                }
-            }
-        },
-        "model.PaginationResponse-model_CategoryResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.CategoryResponse"
-                    }
-                },
-                "pagination": {}
-            }
-        },
-        "model.PaginationResponse-model_ChannelResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.ChannelResponse"
-                    }
-                },
-                "pagination": {}
-            }
-        },
-        "model.PaginationResponse-model_VideoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.VideoResponse"
-                    }
-                },
-                "pagination": {}
-            }
-        },
-        "model.VideoResponse": {
+        "content.VideoResponse": {
             "type": "object",
             "properties": {
                 "channel": {
-                    "$ref": "#/definitions/model.ChannelSummary"
+                    "$ref": "#/definitions/content.ChannelSummary"
                 },
                 "display_id": {
                     "type": "string"
@@ -323,11 +323,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "video_type": {
-                    "$ref": "#/definitions/model.VideoType"
+                    "$ref": "#/definitions/content.VideoType"
                 }
             }
         },
-        "model.VideoType": {
+        "content.VideoType": {
             "type": "string",
             "enum": [
                 "regular",

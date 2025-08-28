@@ -1,19 +1,19 @@
-package api
+package content
 
 import (
 	"encoding/json"
-	model "github.com/mY9Yd2/ytcw/internal/model/api"
-	"github.com/mY9Yd2/ytcw/internal/service"
-	"github.com/rs/zerolog"
 	"net/http"
+
+	"github.com/mY9Yd2/ytcw/internal/common"
+	"github.com/rs/zerolog"
 )
 
 type ChannelHandler struct {
 	Logger         zerolog.Logger
-	ChannelService service.ChannelService
+	ChannelService ChannelService
 }
 
-func NewChannelHandler(logger zerolog.Logger, channelService service.ChannelService) *ChannelHandler {
+func NewChannelHandler(logger zerolog.Logger, channelService ChannelService) *ChannelHandler {
 	return &ChannelHandler{
 		Logger:         logger,
 		ChannelService: channelService,
@@ -29,10 +29,10 @@ func NewChannelHandler(logger zerolog.Logger, channelService service.ChannelServ
 //	@Param			page		query int false "page"
 //	@Param			page_size	query int false "page size"
 //	@Param			category	query string false "category name"
-//	@Success		200	{object} model.PaginationResponse[model.ChannelResponse]{data=[]model.ChannelResponse,pagination=model.Pagination}
+//	@Success		200	{object} common.PaginationResponse[ChannelResponse]{data=[]ChannelResponse,pagination=common.Pagination}
 //	@Router			/channels [get]
 func (h *ChannelHandler) ListChannels(w http.ResponseWriter, r *http.Request) {
-	p := model.NewPaginationFromRequest(r)
+	p := common.NewPaginationFromRequest(r)
 	category := r.URL.Query().Get("category")
 
 	channels, pageMeta, err := h.ChannelService.GetChannels(p, category)
@@ -45,7 +45,7 @@ func (h *ChannelHandler) ListChannels(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	resp := model.PaginationResponse[model.ChannelResponse]{
+	resp := common.PaginationResponse[ChannelResponse]{
 		Data:       channels,
 		Pagination: pageMeta,
 	}

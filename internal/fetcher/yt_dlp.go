@@ -4,14 +4,14 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/mY9Yd2/ytcw/internal/config"
-	model "github.com/mY9Yd2/ytcw/internal/model/fetcher"
-	"github.com/rs/zerolog"
 	"io"
 	"net/http"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/mY9Yd2/ytcw/internal/config"
+	"github.com/rs/zerolog"
 )
 
 type fetchOptions struct {
@@ -77,7 +77,7 @@ func (y *ytdlp) SetVideosURL(channel string) *ytdlp {
 	return y
 }
 
-func (y *ytdlp) fetch(logger zerolog.Logger, out chan<- model.VideoInfo, stop chan struct{}) error {
+func (y *ytdlp) fetch(logger zerolog.Logger, out chan<- VideoInfo, stop chan struct{}) error {
 	cmd, stdout, err := y.startYtDLPCommand()
 	if err != nil {
 		return err
@@ -98,7 +98,7 @@ func (y *ytdlp) streamVideos(
 	cmd *exec.Cmd,
 	reader *bufio.Reader,
 	cutoff time.Time,
-	out chan<- model.VideoInfo,
+	out chan<- VideoInfo,
 	stop chan struct{},
 ) error {
 	for {
@@ -155,8 +155,8 @@ func (y *ytdlp) readNextLine(reader *bufio.Reader) ([]byte, error) {
 	return reader.ReadBytes('\n')
 }
 
-func (y *ytdlp) parseVideoInfo(line []byte) (model.VideoInfo, error) {
-	var info model.VideoInfo
+func (y *ytdlp) parseVideoInfo(line []byte) (VideoInfo, error) {
+	var info VideoInfo
 	err := json.Unmarshal(line, &info)
 	return info, err
 }

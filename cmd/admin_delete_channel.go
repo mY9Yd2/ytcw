@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"strings"
+
+	"github.com/mY9Yd2/ytcw/internal/content"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/logger"
-	"github.com/mY9Yd2/ytcw/internal/repository"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 var adminDeleteChannelCmd = &cobra.Command{
@@ -32,7 +33,7 @@ func deleteChannel(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
-	channelRepo := repository.NewChannelRepository(dbCon)
+	channelRepo := content.NewChannelRepository(dbCon)
 
 	if strings.HasPrefix(channel, "@") {
 		if err := channelRepo.SoftDeleteChannelByUploaderID(channel); err != nil {

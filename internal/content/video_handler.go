@@ -1,19 +1,19 @@
-package api
+package content
 
 import (
 	"encoding/json"
-	model "github.com/mY9Yd2/ytcw/internal/model/api"
-	"github.com/mY9Yd2/ytcw/internal/service"
-	"github.com/rs/zerolog"
 	"net/http"
+
+	"github.com/mY9Yd2/ytcw/internal/common"
+	"github.com/rs/zerolog"
 )
 
 type VideoHandler struct {
 	Logger       zerolog.Logger
-	VideoService service.VideoService
+	VideoService VideoService
 }
 
-func NewVideoHandler(logger zerolog.Logger, videoService service.VideoService) *VideoHandler {
+func NewVideoHandler(logger zerolog.Logger, videoService VideoService) *VideoHandler {
 	return &VideoHandler{
 		Logger:       logger,
 		VideoService: videoService,
@@ -28,10 +28,10 @@ func NewVideoHandler(logger zerolog.Logger, videoService service.VideoService) *
 //	@Produce		json
 //	@Param			page		query int false "page"
 //	@Param			page_size	query int false "page size"
-//	@Success		200	{object} model.PaginationResponse[model.VideoResponse]{data=[]model.VideoResponse,pagination=model.Pagination}
+//	@Success		200	{object} common.PaginationResponse[VideoResponse]{data=[]VideoResponse,pagination=common.Pagination}
 //	@Router			/videos [get]
 func (h *VideoHandler) ListVideos(w http.ResponseWriter, r *http.Request) {
-	p := model.NewPaginationFromRequest(r)
+	p := common.NewPaginationFromRequest(r)
 
 	videos, pageMeta, err := h.VideoService.GetVideos(p)
 	if err != nil {
@@ -43,7 +43,7 @@ func (h *VideoHandler) ListVideos(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	resp := model.PaginationResponse[model.VideoResponse]{
+	resp := common.PaginationResponse[VideoResponse]{
 		Data:       videos,
 		Pagination: pageMeta,
 	}

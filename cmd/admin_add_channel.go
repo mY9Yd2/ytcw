@@ -2,11 +2,10 @@ package cmd
 
 import (
 	"github.com/google/uuid"
+	"github.com/mY9Yd2/ytcw/internal/content"
 	"github.com/mY9Yd2/ytcw/internal/db"
 	"github.com/mY9Yd2/ytcw/internal/fetcher"
 	"github.com/mY9Yd2/ytcw/internal/logger"
-	"github.com/mY9Yd2/ytcw/internal/repository"
-	"github.com/mY9Yd2/ytcw/internal/schema"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +40,7 @@ func addChannel(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
-	categoryRepo := repository.NewCategoryRepository(dbCon)
+	categoryRepo := content.NewCategoryRepository(dbCon)
 	var categoryID *uuid.UUID
 
 	if category != "" {
@@ -58,14 +57,14 @@ func addChannel(cmd *cobra.Command, args []string) {
 
 	channelInfo := ytFetcher.GetChannelInfo(channel)
 
-	info := schema.Channel{
+	info := content.Channel{
 		UploaderID: channelInfo.UploaderID,
 		ChannelID:  channelInfo.ChannelID,
 		Channel:    channelInfo.Channel,
 	}
 	info.CategoryRefer = categoryID
 
-	channelRepo := repository.NewChannelRepository(dbCon)
+	channelRepo := content.NewChannelRepository(dbCon)
 	if err := channelRepo.SaveChannel(&info); err != nil {
 		log.Fatal().Err(err).Msg("Failed to save channel")
 	}
