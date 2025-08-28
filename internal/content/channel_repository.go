@@ -67,7 +67,7 @@ func (r *channelRepository) FindAll(p *common.Pagination, categoryName string) (
 		Preload("Category").
 		Limit(int(p.Limit())).
 		Offset(int(p.Offset())).
-		Order("channel ASC").
+		Order("uploader_id ASC").
 		Find(&channels).Error
 
 	return channels, total, err

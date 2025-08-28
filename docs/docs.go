@@ -73,7 +73,7 @@ const docTemplate = `{
         },
         "/channels": {
             "get": {
-                "description": "Get a paginated list of channels ordered by channel in ascending order",
+                "description": "Get a paginated list of channels ordered by uploader_id (YouTube handler) in ascending order",
                 "produces": [
                     "application/json"
                 ],

@@ -23,7 +23,7 @@ func NewChannelHandler(logger zerolog.Logger, channelService ChannelService) *Ch
 // ListChannels godoc
 //
 //	@Summary		List channels
-//	@Description	Get a paginated list of channels ordered by channel in ascending order
+//	@Description	Get a paginated list of channels ordered by uploader_id (YouTube handler) in ascending order
 //	@Tags			Channels
 //	@Produce		json
 //	@Param			page		query int false "page"
