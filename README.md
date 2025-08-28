@@ -98,6 +98,36 @@ sudo systemctl enable --now ytcw-api.service
 
 If you make any changes to the config file, please restart the services using systemd.
 
+## Frontend
+
+- [ytcw-frontend](https://github.com/mY9Yd2/ytcw-frontend)
+
+Example caddy file:
+
+```text
+example.com {
+        # ytcw server
+
+        root * /var/www/example.com
+
+        encode zstd gzip
+
+        file_server
+
+        reverse_proxy /api/* :4040
+
+        log {
+                # log file
+        }
+        
+        header {
+                # additional headers
+        }
+}
+```
+
+Just put the built (`ng build`) files in the `/var/www/example.com` folder.
+
 ## Development
 
 You can set up a local configuration inside the `config/` folder named `config.local.toml` and override only the settings you need, such as the database password.
