@@ -1,6 +1,6 @@
 # ytcw - YouTube Channel Watcher
 
-> [!INFO]
+> [!NOTE]
 >
 > Current status:
 >
