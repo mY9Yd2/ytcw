@@ -1,8 +1,11 @@
 # ytcw - YouTube Channel Watcher
 
-> [!WARNING]
+> [!INFO]
 >
-> Currently in a work-in-progress (WIP) and experimental state - usable, but expect breaking changes.
+> Current status:
+>
+> While there are many ways to improve it, such as search and filtering, which would also need to be implemented on the frontend, I don’t need these features for my personal use case yet.  
+> That’s why they haven’t been implemented.
 
 ## About
 
