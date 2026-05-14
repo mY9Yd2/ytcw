@@ -4,7 +4,8 @@
 >
 > Current status:
 >
-> While there are many ways to improve it, such as search and filtering, which would also need to be implemented on the frontend, I don’t need these features for my personal use case yet.  
+> Maintained to some extent, but there is not much to do.  
+> While there are many ways to improve it, such as search and filtering, which would also need to be implemented on the frontend, I don’t need these features for my personal use case.  
 > That’s why they haven’t been implemented.
 
 ## About
@@ -120,11 +121,11 @@ example.com {
         reverse_proxy /api/* :4040
 
         log {
-                # log file
+                # log file optionally, see the Caddy docs
         }
         
         header {
-                # additional headers
+                # additional headers, if you need them
         }
 }
 ```
@@ -134,16 +135,3 @@ Just put the built (`ng build`) files in the `/var/www/example.com` folder.
 ## Development
 
 You can set up a local configuration inside the `config/` folder named `config.local.toml` and override only the settings you need, such as the database password.
-
-### Rewrite Reason
-
-This is a rewrite of my previous yt-channel-watcher project, which was originally written in Python.
-I wanted to transform it from a static website into a REST API. Rather than fetching everything in one big batch, I wanted to spread the updates over the day.
-
-I also added some small quality-of-life features, like storing channel information in a database instead of YAML files, and using the installed yt-dlp so it can be updated separately.
-I mostly SSH into my server, so I didn’t feel it was necessary to provide admin functionality through the REST API.
-
-Personally, I don’t really enjoy Python’s type hints - there’s no real enforcement behind them. While the uv project is great, I still dislike how Python’s package management works overall.
-
-Why Go?
-Initially, I considered a few other languages - mainly PHP and Java. PHP didn’t seem like the right tool for this job at first glance, and while the Java ecosystem is powerful, its learning curve is much higher for what I needed. So I decided to go with Go.
