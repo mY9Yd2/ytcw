@@ -1,13 +1,5 @@
 # ytcw - YouTube Channel Watcher
 
-> [!NOTE]
->
-> Current status:
->
-> Maintained to some extent, but there is not much to do.  
-> While there are many ways to improve it, such as search and filtering, which would also need to be implemented on the frontend, I don’t need these features for my personal use case.  
-> That’s why they haven’t been implemented.
-
 ## About
 
 ytcw is a program that calls [yt-dlp](https://github.com/yt-dlp/yt-dlp) to fetch channel information (videos and shorts), store it in a PostgreSQL database, and provide REST API endpoints.
